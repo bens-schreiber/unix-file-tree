@@ -1,0 +1,7 @@
+#ifndef CONSTS_H
+#define CONSTS_H
+
+#define MAX_FILE_NAME_LENGTH 256
+#define MAX_FILE_CHILDREN 256
+
+#endif // CONSTS_H
