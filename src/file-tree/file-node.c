@@ -1,4 +1,5 @@
 #include "file-tree.h"
+#include "../consts.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
@@ -40,6 +41,7 @@ file_node_t *file_node_add_child(file_node_t *node, file_name_t name)
 
 void *file_node_free(file_node_t *node)
 {
+
     // Free children
     for (int i = 0; i < node->children_size; i++)
     {
@@ -48,5 +50,6 @@ void *file_node_free(file_node_t *node)
     }
 
     free(node);
-    return NULL;
+    node = NULL;
+    return node;
 }

@@ -3,5 +3,6 @@
 
 #define MAX_FILE_NAME_LENGTH 256
 #define MAX_FILE_CHILDREN 256
+#define TREE_ROOT_NAME "/"
 
 #endif // CONSTS_H

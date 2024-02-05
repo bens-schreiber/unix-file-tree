@@ -1,4 +1,5 @@
 #include "tests.h"
+#include "../consts.h"
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -12,7 +13,7 @@ void test_tree_init()
     TEST(test_tree_init);
     file_tree_t *tree = file_tree_init();
 
-    assert(strcmp(tree->root->name, "/") == 0);
+    assert(strcmp(tree->root->name, TREE_ROOT_NAME) == 0);
     assert(tree->size == 1);
     assert(tree->root->children_size == 0);
     assert(tree->root->children[0] == NULL);
@@ -61,4 +62,21 @@ void test_tree_insert_multiple()
     assert(tree == NULL);
 
     PASS(test_tree_insert_multiple);
+}
+
+void test_tree_delete()
+{
+    TEST(test_tree_delete);
+    file_tree_t *tree = file_tree_init();
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir1");
+
+    file_tree_free_child(tree, tree->root, node);
+    assert(tree->size == 1);
+    assert(tree->root->children_size == 0);
+    assert(tree->root->children[0] == NULL);
+
+    tree = file_tree_free(tree);
+    assert(tree == NULL);
+
+    PASS(test_tree_delete);
 }

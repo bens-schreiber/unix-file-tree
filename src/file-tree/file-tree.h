@@ -55,4 +55,11 @@ static inline file_node_t *file_tree_add_child(file_tree_t *tree, file_node_t *n
     return child;
 }
 
+/// @brief Deletes a child from a parent node
+/// @param tree the file tree
+/// @param parent the parent node
+/// @param node the node to delete from the parent
+/// @return NULL
+void *file_tree_free_child(file_tree_t *tree, file_node_t *parent, file_node_t *node);
+
 #endif // FILE_TREE_H
