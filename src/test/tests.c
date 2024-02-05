@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "../file_tree/file_tree.h"
 #include "../tree_dump/tree_dump.h"
+#include "../commands/commands.h"
 
 #define TEST(name) printf("\nRunning test: " #name "\n");
 #define PASS(name) printf("Test passed: " #name "\n");
@@ -14,6 +15,7 @@
 void test_tree_init()
 {
     TEST(test_tree_init);
+
     file_tree_t *tree = file_tree_init();
 
     assert(strcmp(tree->root->name, TREE_ROOT_NAME) == 0);
@@ -30,6 +32,7 @@ void test_tree_init()
 void test_tree_insert()
 {
     TEST(test_tree_insert);
+
     file_tree_t *tree = file_tree_init();
     file_node_t *node = file_tree_add_child(tree, tree->root, "dir1");
 
@@ -70,6 +73,7 @@ void test_tree_insert_multiple()
 void test_tree_delete()
 {
     TEST(test_tree_delete);
+
     file_tree_t *tree = file_tree_init();
     file_node_t *node = file_tree_add_child(tree, tree->root, "dir1");
 
@@ -87,6 +91,7 @@ void test_tree_delete()
 void test_tree_delete_multiple()
 {
     TEST(test_tree_delete_multiple);
+
     file_tree_t *tree = file_tree_init();
     file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
 
@@ -120,6 +125,7 @@ void test_tree_delete_multiple()
 void test_tree_dump()
 {
     TEST(test_tree_dump);
+
     file_tree_t *tree = file_tree_init();
     file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
 
@@ -131,5 +137,26 @@ void test_tree_dump()
     }
 
     tree_dump(tree);
+
+    tree = file_tree_free(tree);
+
     PASS(test_tree_dump);
+}
+
+void test_command_pwd()
+{
+    TEST(test_command_pwd);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+    out_buffer_t out_buffer;
+    pwd(out_buffer);
+
+    printf("out_buffer: %s\n", out_buffer);
+    assert(strcmp(out_buffer, "/") == 0);
+
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_command_pwd);
 }

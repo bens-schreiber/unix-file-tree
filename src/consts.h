@@ -2,6 +2,7 @@
 #define CONSTS_H
 
 #define MAX_FILE_NAME_LENGTH 256
-#define TREE_ROOT_NAME "/"
+#define TREE_ROOT_NAME ""
+#define SYSTEM_PATH_BUFFER_SIZE 0xFFF
 
 #endif // CONSTS_H

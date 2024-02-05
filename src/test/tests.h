@@ -19,6 +19,9 @@ extern void test_tree_delete_multiple();
 /// @brief Dump the file tree to the tree-dump file
 extern void test_tree_dump();
 
+/// @brief present working directory command
+extern void test_command_pwd();
+
 /// @brief Run all tests.
 static inline void test()
 {
@@ -28,6 +31,7 @@ static inline void test()
     test_tree_delete();
     test_tree_delete_multiple();
     test_tree_dump();
+    test_command_pwd();
 }
 
 #endif // TESTS_H
