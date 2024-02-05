@@ -5,7 +5,7 @@
 #include "../file-tree/file-tree.h"
 
 #define TEST(name) printf("\n\nRunning test: " #name "\n");
-#define TEST_PASS(name) printf("Test passed: " #name "\n");
+#define PASS(name) printf("Test passed: " #name "\n");
 
 void test_tree_init()
 {
@@ -20,5 +20,5 @@ void test_tree_init()
     tree = file_tree_free(tree);
     assert(tree == NULL);
 
-    TEST_PASS(test_tree_init);
+    PASS(test_tree_init);
 }
