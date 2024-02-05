@@ -3,8 +3,8 @@
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
-#include "../file-tree/file-tree.h"
-#include "../file-tree/tree-dump/tree-dump.h"
+#include "../file_tree/file_tree.h"
+#include "../tree_dump/tree_dump.h"
 
 #define TEST(name) printf("\nRunning test: " #name "\n");
 #define PASS(name) printf("Test passed: " #name "\n");

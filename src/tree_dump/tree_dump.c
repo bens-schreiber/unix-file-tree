@@ -1,4 +1,4 @@
-#include "tree-dump.h"
+#include "tree_dump.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>

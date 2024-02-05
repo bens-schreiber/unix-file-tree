@@ -1,7 +1,7 @@
 #ifndef TREE_DUMP_H
 #define TREE_DUMP_H
 
-#include "../file-tree.h"
+#include "../file_tree/file_tree.h"
 
 #define TREE_DUMP_PATH "tree-dump.tree"
 

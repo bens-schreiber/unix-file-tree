@@ -1,6 +1,6 @@
 #ifndef FILE_TREE_H
 #define FILE_TREE_H
-#include "linked-list/linked-list.h"
+#include "../linked_list/linked_list.h"
 #include "../consts.h"
 
 typedef char file_name_t[MAX_FILE_NAME_LENGTH];

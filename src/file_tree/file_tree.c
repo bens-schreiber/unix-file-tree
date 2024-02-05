@@ -1,4 +1,4 @@
-#include "file-tree.h"
+#include "file_tree.h"
 #include "../consts.h"
 #include <stdlib.h>
 #include <assert.h>
