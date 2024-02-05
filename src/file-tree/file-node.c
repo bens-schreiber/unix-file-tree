@@ -9,11 +9,7 @@ file_node_t *file_node_init(file_name_t name)
     file_node_t *node = malloc(sizeof(file_node_t));
     assert(node != NULL);
 
-    // Initialize children to NULL
-    for (int i = 0; i < MAX_FILE_CHILDREN; i++)
-    {
-        node->children[i] = NULL;
-    }
+    node->children = linked_list_init();
 
     // Copy name
     strcpy(node->name, name);
@@ -30,25 +26,19 @@ file_node_t *file_node_init(file_name_t name)
 
 file_node_t *file_node_add_child(file_node_t *node, file_name_t name)
 {
-    assert(node->children_size < MAX_FILE_CHILDREN);
     file_node_t *child = file_node_init(name);
 
     // Add child to parent
     // Increment children_size
-    node->children[node->children_size++] = child;
+    linked_list_insert(node->children, (void *)child);
+    node->children_size++;
+
     return child;
 }
 
 void *file_node_free(file_node_t *node)
 {
-
-    // Free children
-    for (int i = 0; i < node->children_size; i++)
-    {
-        file_node_free(node->children[i]);
-        node->children[i] = NULL;
-    }
-
+    linked_list_free(node->children);
     free(node);
     node = NULL;
     return node;

@@ -2,6 +2,7 @@
 #include "../consts.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 file_tree_t *file_tree_init()
 {
@@ -21,13 +22,11 @@ void *file_tree_free(file_tree_t *tree)
     return NULL;
 }
 
-void *file_tree_free_child(file_tree_t *tree, file_node_t *parent, file_node_t *node)
+void *file_tree_delete_child(file_tree_t *tree, file_node_t *parent, file_node_t *node)
 {
-    node = file_node_free(node);
+    unsigned int node_size = node->children_size;
+    assert(linked_list_delete(parent->children, (void*)node) == 1);
     parent->children_size--;
-
-    
-    
-    tree->size--;
+    tree->size -= node_size + 1;
     return node;
 }

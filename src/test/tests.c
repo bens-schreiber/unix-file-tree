@@ -1,12 +1,14 @@
 #include "tests.h"
 #include "../consts.h"
-#include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 #include "../file-tree/file-tree.h"
 
 #define TEST(name) printf("\nRunning test: " #name "\n");
 #define PASS(name) printf("Test passed: " #name "\n");
+
+#define MAX_FILE_CHILDREN 0xFF
 
 void test_tree_init()
 {
@@ -16,7 +18,7 @@ void test_tree_init()
     assert(strcmp(tree->root->name, TREE_ROOT_NAME) == 0);
     assert(tree->size == 1);
     assert(tree->root->children_size == 0);
-    assert(tree->root->children[0] == NULL);
+    assert(tree->root->children->head == NULL);
 
     tree = file_tree_free(tree);
     assert(tree == NULL);
@@ -32,7 +34,7 @@ void test_tree_insert()
 
     assert(tree->size == 2);
     assert(tree->root->children_size == 1);
-    assert(tree->root->children[0] == node);
+    assert(tree->root->children->head->data == node);
     assert(strcmp(node->name, "dir1") == 0);
 
     tree = file_tree_free(tree);
@@ -70,13 +72,46 @@ void test_tree_delete()
     file_tree_t *tree = file_tree_init();
     file_node_t *node = file_tree_add_child(tree, tree->root, "dir1");
 
-    file_tree_free_child(tree, tree->root, node);
+    node = file_tree_delete_child(tree, tree->root, node);
     assert(tree->size == 1);
     assert(tree->root->children_size == 0);
-    assert(tree->root->children[0] == NULL);
+    assert(tree->root->children->head == NULL);
 
     tree = file_tree_free(tree);
     assert(tree == NULL);
 
     PASS(test_tree_delete);
+}
+
+void test_tree_delete_multiple()
+{
+    TEST(test_tree_delete_multiple);
+    file_tree_t *tree = file_tree_init();
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+
+    file_node_t *dirs[MAX_FILE_CHILDREN];
+
+    for (int i = 0; i < MAX_FILE_CHILDREN; i++)
+    {
+        char name[MAX_FILE_NAME_LENGTH];
+        sprintf(name, "file%d", i);
+        dirs[i] = file_tree_add_child(tree, node, name);
+    }
+
+    // Delete half of them
+    for (int i = 0; i < MAX_FILE_CHILDREN / 2; i++)
+    {
+        file_tree_delete_child(tree, node, dirs[i]);
+    }
+
+    // Delete all of them
+    file_tree_delete_child(tree, tree->root, node);
+
+    assert(tree->size == 1);
+    assert(tree->root->children_size == 0);
+    assert(tree->root->children->head == NULL);
+
+    tree = file_tree_free(tree);
+
+    PASS(test_tree_delete_multiple);
 }
