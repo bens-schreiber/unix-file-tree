@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "file-tree.h": "c"
+        "file-tree.h": "c",
+        "tree-dump.h": "c"
     }
 }

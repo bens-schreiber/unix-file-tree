@@ -16,6 +16,9 @@ extern void test_tree_delete();
 /// @brief Delete many file nodes from the file tree
 extern void test_tree_delete_multiple();
 
+/// @brief Dump the file tree to the tree-dump file
+extern void test_tree_dump();
+
 /// @brief Run all tests.
 static inline void test()
 {
@@ -24,6 +27,7 @@ static inline void test()
     test_tree_insert_multiple();
     test_tree_delete();
     test_tree_delete_multiple();
+    test_tree_dump();
 }
 
 #endif // TESTS_H

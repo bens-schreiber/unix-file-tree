@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "../file-tree/file-tree.h"
+#include "../file-tree/tree-dump/tree-dump.h"
 
 #define TEST(name) printf("\nRunning test: " #name "\n");
 #define PASS(name) printf("Test passed: " #name "\n");
@@ -114,4 +115,21 @@ void test_tree_delete_multiple()
     tree = file_tree_free(tree);
 
     PASS(test_tree_delete_multiple);
+}
+
+void test_tree_dump()
+{
+    TEST(test_tree_dump);
+    file_tree_t *tree = file_tree_init();
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+
+    for (int i = 0; i < MAX_FILE_CHILDREN; i++)
+    {
+        char name[MAX_FILE_NAME_LENGTH];
+        sprintf(name, "file%d", i);
+        file_tree_add_child(tree, node, name);
+    }
+
+    tree_dump(tree);
+    PASS(test_tree_dump);
 }
