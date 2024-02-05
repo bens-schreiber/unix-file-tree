@@ -4,10 +4,18 @@
 /// @brief Initialize a file tree, inspect initial attributes, free it from memory
 extern void test_tree_init();
 
+/// @brief Insert a file node into a file tree
+extern void test_tree_insert();
+
+/// @brief Insert many file nodes into the file tree
+extern void test_tree_insert_multiple();
+
 /// @brief Run all tests.
 static inline void test()
 {
     test_tree_init();
+    test_tree_insert();
+    test_tree_insert_multiple();
 }
 
 #endif // TESTS_H
