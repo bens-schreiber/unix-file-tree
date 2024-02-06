@@ -16,9 +16,6 @@ extern void test_tree_delete();
 /// @brief Delete many file nodes from the file tree
 extern void test_tree_delete_multiple();
 
-/// @brief Dump the file tree to the tree-dump file
-extern void test_tree_dump();
-
 /// @brief present working directory command
 extern void test_command_pwd();
 
@@ -46,6 +43,12 @@ extern void test_command_creat();
 /// @brief remove a file command
 extern void test_command_rm();
 
+/// @brief Dump the file tree to the tree-dump file
+extern void test_tree_dump();
+
+/// @brief load a file tree from the tree-dump file
+extern void test_tree_load();
+
 /// @brief Run all tests. Done in a linear fashion such that prequisites tests are ran first.
 static inline void test()
 {
@@ -54,7 +57,6 @@ static inline void test()
     test_tree_insert_multiple();
     test_tree_delete();
     test_tree_delete_multiple();
-    test_tree_dump();
     test_command_pwd();
     test_path_search();
     test_command_ls();
@@ -64,6 +66,8 @@ static inline void test()
     test_dir_crud();
     test_command_creat();
     test_command_rm();
+    test_tree_dump();
+    test_tree_load();
 }
 
 #endif // TESTS_H

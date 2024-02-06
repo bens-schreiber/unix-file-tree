@@ -1,4 +1,5 @@
 #include "tree_dump.h"
+#include "../consts.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -16,30 +17,22 @@ void preorder_traversal(const file_node_t *node)
         return;
     }
 
-    strcat(string_buffer, node->name);
+    strcpy(string_buffer + string_buffer_index, node->name);
     string_buffer_index += strlen(node->name);
-    strcat(string_buffer, "\n");
-    string_buffer_index += 1;
+    string_buffer[string_buffer_index++] = ' ';
 
-    assert(string_buffer_index < STRING_BUFFER_SIZE);
-
-    // recurse on children
-    if (!node->is_dir)
+    if (node->children == NULL)
     {
         return;
     }
-
     linked_list_node_t *iter = node->children->head;
     while (iter != NULL)
     {
-        file_node_t *child = (file_node_t *)iter->data;
-        preorder_traversal(child);
-        if (iter->next == NULL)
-        {
-            break;
-        }
+        preorder_traversal(iter->data);
         iter = iter->next;
     }
+
+    string_buffer[string_buffer_index++] = TREE_SERIALIZE_DELIMITER;
 }
 
 void tree_dump(const file_tree_t *tree)
@@ -55,18 +48,55 @@ void tree_dump(const file_tree_t *tree)
     free(string_buffer);
 }
 
-// From our tree dump made with a preorder traversal, we can reconstruct the tree by reading the file line by line.
-// file_tree_t *tree_load() {
-//     file_tree_t *tree = file_tree_init();
-//     FILE *file = fopen(TREE_DUMP_PATH, "r");
-//     assert(file != NULL);
+void dfs_load(file_tree_t *tree, file_node_t *parent, linked_list_t *preorder_trav_list)
+{
+    assert(preorder_trav_list != NULL);
+    if (preorder_trav_list->size == 0)
+    {
+        return;
+    }
 
-//     char line[MAX_FILE_NAME_LENGTH];
-//     while (fgets(line, MAX_FILE_NAME_LENGTH, file) != NULL) {
-//         line[strcspn(line, "\n")] = 0; // remove newline
-//         file_tree_add_child(tree, tree->root, line);
-//     }
+    while (preorder_trav_list->size > 0)
+    {
+        char *phrase = preorder_trav_list->head->data;
+        if (phrase[0] == TREE_SERIALIZE_DELIMITER)
+        {
+            preorder_trav_list->head->data++;
+            return;
+        }
+        file_node_t *node = file_tree_add_child(tree, parent, phrase, 1);
+        linked_list_pop_head(preorder_trav_list);
+        dfs_load(tree, node, preorder_trav_list);
+    }
+}
 
-//     fclose(file);
-//     return tree;
-// }
+file_tree_t *tree_load()
+{
+    FILE *file = fopen(TREE_DUMP_PATH, "r");
+    if (file == NULL)
+    {
+        return NULL;
+    }
+
+    file_tree_t *tree = file_tree_init();
+    char *buffer = (char *)malloc(STRING_BUFFER_SIZE);
+    fgets(buffer, STRING_BUFFER_SIZE, file);
+    fclose(file);
+
+    linked_list_t *preorder_trav_list = linked_list_init();
+
+    // load buffer into linked list seperated by spaces
+    // this could be done more efficiently but c strings are the devil
+    char *token = strtok(buffer, " ");
+    while (token != NULL)
+    {
+        char *token_copy = strdup(token);
+        linked_list_insert_tail(preorder_trav_list, token_copy);
+        token = strtok(NULL, " ");
+    }
+
+    dfs_load(tree, tree->root, preorder_trav_list);
+
+    free(buffer);
+    return tree;
+}

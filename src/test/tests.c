@@ -122,27 +122,6 @@ void test_tree_delete_multiple()
     PASS(test_tree_delete_multiple);
 }
 
-void test_tree_dump()
-{
-    TEST(test_tree_dump);
-
-    file_tree_t *tree = file_tree_init();
-    file_node_t *node = file_tree_add_child(tree, tree->root, "dir", 1);
-
-    for (int i = 0; i < MAX_FILE_CHILDREN; i++)
-    {
-        char name[MAX_FILE_NAME_LENGTH];
-        sprintf(name, "file%d", i);
-        file_tree_add_child(tree, node, name, 0);
-    }
-
-    tree_dump(tree);
-
-    tree = file_tree_free(tree);
-
-    PASS(test_tree_dump);
-}
-
 void test_command_pwd()
 {
     TEST(test_command_pwd);
@@ -429,4 +408,94 @@ void test_command_rm() {
     tree = file_tree_free(tree);
 
     PASS(test_command_rm);
+}
+
+void test_tree_dump()
+{
+    TEST(test_tree_dump);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+
+    out_buffer_t out_buffer;
+    mkdir(out_buffer, tree, "dir1");
+    mkdir(out_buffer, tree, "dir2");
+    mkdir(out_buffer, tree, "dir3");
+
+    cd(out_buffer, tree, "dir1");
+    mkdir(out_buffer, tree, "dir4");
+    cd(out_buffer, tree, "../dir2");
+    mkdir(out_buffer, tree, "dir5");
+    cd(out_buffer, tree, "../dir3");
+    mkdir(out_buffer, tree, "dir6");
+
+    tree_dump(tree);
+
+    // read the file
+    FILE *file = fopen("../build/tree-dump.tree", "r");
+    assert(file != NULL);
+
+    char buffer[0xFFF];
+    int size = fread(buffer, 1, 0xFFF, file);
+    buffer[size] = '\0';
+
+    assert(strcmp(buffer, " dir1 dir4 $$dir2 dir5 $$dir3 dir6 $$$") == 0);
+
+    fclose(file);
+    tree = file_tree_free(tree);
+
+    PASS(test_tree_dump);
+}
+
+void test_tree_load() {
+    TEST(test_tree_load);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+
+    out_buffer_t out_buffer;
+    mkdir(out_buffer, tree, "dir1");
+    mkdir(out_buffer, tree, "dir2");
+    mkdir(out_buffer, tree, "dir3");
+
+    cd(out_buffer, tree, "dir1");
+    mkdir(out_buffer, tree, "dir4");
+    cd(out_buffer, tree, "../dir2");
+    mkdir(out_buffer, tree, "dir5");
+    cd(out_buffer, tree, "../dir3");
+    mkdir(out_buffer, tree, "dir6");
+
+    tree_dump(tree);
+
+    // read the file
+    FILE *file = fopen("../build/tree-dump.tree", "r");
+    assert(file != NULL);
+
+    char buffer[0xFFF];
+    int size = fread(buffer, 1, 0xFFF, file);
+    buffer[size] = '\0';
+    fclose(file);
+
+    assert(strcmp(buffer, " dir1 dir4 $$dir2 dir5 $$dir3 dir6 $$$") == 0);
+    tree = file_tree_free(tree);
+
+    // load the file
+    tree = tree_load();
+
+    // serialize it again
+    tree_dump(tree);
+
+    // read the file
+    file = fopen("../build/tree-dump.tree", "r");
+    assert(file != NULL);
+
+    size = fread(buffer, 1, 0xFFF, file);
+    buffer[size] = '\0';
+    fclose(file);
+
+    assert(strcmp(buffer, " dir1 dir4 $$dir2 dir5 $$dir3 dir6 $$$") == 0);
+    tree = file_tree_free(tree);
+
+
+    PASS(test_tree_dump);
 }

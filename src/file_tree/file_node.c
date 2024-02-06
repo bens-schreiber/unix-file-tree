@@ -32,7 +32,7 @@ file_node_t *file_node_add_child(file_node_t *node, file_name_t name, unsigned c
 
     // Add child to parent
     // Increment children_size
-    linked_list_insert(node->children, (void *)child);
+    linked_list_insert_tail(node->children, (void *)child);
     node->children_size++;
 
     return child;
