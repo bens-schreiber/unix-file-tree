@@ -41,6 +41,6 @@ extern void rm(file_tree_t *tree, const char *path);
 /// @brief Changes the current directory
 /// @param tree the file tree
 /// @param path the path to the new dir
-extern void cd(const char *dir_name, out_buffer_t out_buffer);
+extern void cd(file_tree_t *tree, const char *dir_name);
 
 #endif // COMMANDS_H

@@ -22,40 +22,58 @@ void pwd(out_buffer_t out_buffer)
     while (iter != NULL)
     {
         file_node_t *node = (file_node_t *)iter->data;
-        out_buffer[index] = '/';
-        index += 1;
         for (int i = 0; i < strlen(node->name); i++)
         {
             out_buffer[index] = node->name[i];
             index += 1;
         }
         iter = iter->next;
+        out_buffer[index] = '/';
+        index += 1;
     }
     out_buffer[index] = '\0';
 }
 
-void cd(const char *dir_name, out_buffer_t out_buffer)
+void cd(file_tree_t *tree, const char *dir_name)
 {
-    // /* 
-    //     We are going to be given a string in the format dir1/dir2/dir3 and so on.
-    //     Essentially, these are a series of directories that we need to traverse to.
-    //     We will split the string by the '/' character and then traverse the tree
-    //     to find the directory we are looking for.
+    if (strcmp(dir_name, ".") == 0)
+    {
+        return;
+    }
 
-    //     There are two cases to consider:
-    //     1. The directory is inside of the current directory (i.e. it is a child of the current directory)
-    //     2. The directory is in a completely different part of the tree (i.e. it is not a child of the current directory)
-    // */
+    if (strcmp(dir_name, "..") == 0)
+    {
+        linked_list_pop_tail(_system_path);
+        return;
+    }
 
-    // // Split the string by the '/' character
-    // char *token = strtok((char *)dir_name, "/");
-    // linked_list_t *new_path = linked_list_init();
-    // linked_list_t *old_path = linked_list_init();
-    // while (token != NULL)
-    // {
-        
-    //     token = strtok(NULL, "/");
-    // }
+    if (strcmp(dir_name, "/") == 0)
+    {
+        linked_list_free(_system_path);
+        _system_path = linked_list_init();
+        linked_list_insert(_system_path, tree->root);
+        return;
+    }
+
+    linked_list_t *path = NULL;
+
+    // If the path is relative (ie ./dir) we need to search from the current directory
+    // If the path is absolute (ie /dir) we need to search from the root
+    if (dir_name[0] == '.' && dir_name[1] == '/')
+    {
+        dir_name += 2;
+        path = tree_search_with_path((file_node_t *)_system_path->tail->data, dir_name);
+    } else {
+        path = tree_search_with_path(tree->root, dir_name);
+    }
+
+    if (path == NULL)
+    {
+        return;
+    }
+
+    linked_list_free(_system_path);
+    _system_path = path;
 }
 
 void ls(out_buffer_t out_buffer)

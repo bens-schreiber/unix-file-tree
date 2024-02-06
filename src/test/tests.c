@@ -160,7 +160,8 @@ void test_command_pwd()
     PASS(test_command_pwd);
 }
 
-void test_path_search() {
+void test_path_search()
+{
     TEST(test_path_search);
 
     file_tree_t *tree = file_tree_init();
@@ -182,10 +183,10 @@ void test_path_search() {
     tree = file_tree_free(tree);
 
     PASS(test_path_search);
-    
 }
 
-void test_command_ls() {
+void test_command_ls()
+{
     TEST(test_command_ls);
 
     file_tree_t *tree = file_tree_init();
@@ -220,4 +221,58 @@ void test_command_ls() {
     tree = file_tree_free(tree);
 
     PASS(test_command_ls);
+}
+
+void test_command_cd()
+{
+    TEST(test_command_cd);
+
+    file_tree_t *tree = file_tree_init();
+    file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1");
+    file_node_t *dir2 = file_tree_add_child(tree, tree->root, "dir2");
+
+    path_init(tree);
+
+    out_buffer_t out_buffer;
+
+    // to dir1
+    cd(tree, "dir1");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/dir1/") == 0);
+
+    // up 1 dir
+    cd(tree, "..");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/") == 0);
+
+    // root to dir
+    cd(tree, "dir2");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/dir2/") == 0);
+
+    // root from dir 
+    cd(tree, "/");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/") == 0);
+
+    // ./ relative path
+    cd(tree, "./dir1");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/dir1/") == 0);
+
+    // dir2 isn't found
+    cd(tree, "./dir2");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/dir1/") == 0);
+
+    // from dir1 to dir2
+    cd(tree, "/dir2");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/dir2/") == 0);
+
+
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_command_cd);
 }
