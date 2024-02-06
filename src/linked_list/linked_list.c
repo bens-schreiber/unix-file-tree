@@ -1,6 +1,5 @@
 #include "linked_list.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
 
 linked_list_t *linked_list_init()
@@ -63,7 +62,7 @@ unsigned char linked_list_delete(linked_list_t *list, const void *data)
 void linked_list_free(linked_list_t *list)
 {
     assert(list != NULL);
-    
+
     linked_list_node_t *curr = list->head;
     while (curr != NULL)
     {

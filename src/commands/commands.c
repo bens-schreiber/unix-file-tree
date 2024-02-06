@@ -108,6 +108,7 @@ void ls(out_buffer_t out_buffer)
     out_buffer[index] = '\0';
 }
 
+// TODO: Do we want absolute path creation?
 void mkdir(file_tree_t *tree, const char *path)
 {
     assert(path != NULL && strlen(path) != 0);
@@ -118,6 +119,22 @@ void mkdir(file_tree_t *tree, const char *path)
         file_tree_add_child(tree, node, path);
         return;
     }
+}
 
-    // TODO: Do we want absolute path creation?
+// TODO: Do we want absolute path creation?
+void rm(file_tree_t *tree, const char *path)
+{
+    assert(path != NULL && strlen(path) != 0);
+    // If the path starts with no slash, it is just the current directory
+    if (strstr(path, "/") == NULL)
+    {
+        file_node_t *parent = (file_node_t *)_system_path->tail->data;
+        linked_list_t *child_to_remove = tree_search_with_path(parent, path);
+        assert(child_to_remove != NULL);
+        file_node_t *child = (file_node_t *)child_to_remove->tail->data;
+
+        file_tree_delete_child(tree, parent, child);
+
+        linked_list_free(child_to_remove);
+    }
 }
