@@ -7,7 +7,7 @@
 
 #define COMMAND(name) void process_##name(file_tree_t *tree, out_buffer_t out_buffer, const char *arg)
 
-COMMAND(ls) { ls(out_buffer); }
+COMMAND(ls) { ls(out_buffer, tree, arg); }
 COMMAND(cd) { cd(out_buffer, tree, arg); }
 COMMAND(pwd) { pwd(out_buffer); }
 COMMAND(mkdir) { mkdir(out_buffer, tree, arg); }

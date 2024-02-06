@@ -199,7 +199,7 @@ void test_command_ls()
 
     path_init(tree);
     out_buffer_t out_buffer;
-    ls(out_buffer);
+    ls(out_buffer, tree, ".");
 
     // We expect there to be MAX_FILE_CHILDREN files in the dir
     // Count the number of lines
@@ -293,7 +293,7 @@ void test_command_mkdir()
     mkdir(out_buffer, tree, "dir2");
     mkdir(out_buffer, tree, "dir3");
 
-    ls(out_buffer);
+    ls(out_buffer, tree, ".");
 
     assert(tree->root->children_size == 3);
     assert(strstr(out_buffer, "dir1") != NULL);
@@ -323,7 +323,7 @@ void test_command_rmdir()
     rmdir(out_buffer, tree, "dir2");
     rmdir(out_buffer, tree, "dir3");
 
-    ls(out_buffer);
+    ls(out_buffer, tree, ".");
 
     assert(tree->root->children_size == 0);
     assert(strstr(out_buffer, "dir1") == NULL);
@@ -351,12 +351,24 @@ void test_dir_crud()
     assert(strcmp(out_buffer, "/a/") == 0);
 
     mkdir(out_buffer, tree, "b");
-    ls(out_buffer);
+    ls(out_buffer, tree, ".");
     assert(strstr(out_buffer, "b") != NULL);
 
     cd(out_buffer, tree, "b");
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/a/b/") == 0);
+
+    cd(out_buffer, tree, "..");
+    rmdir(out_buffer, tree, "b");
+    ls(out_buffer, tree, ".");
+    assert(strstr(out_buffer, "b") == NULL);
+
+    mkdir(out_buffer, tree, "c");
+    cd(out_buffer, tree, "c");
+    mkdir(out_buffer, tree, "d");
+    cd(out_buffer, tree, "d");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/a/c/d/") == 0);
 
     path_free();
     tree = file_tree_free(tree);

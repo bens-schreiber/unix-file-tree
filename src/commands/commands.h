@@ -9,7 +9,12 @@ typedef char out_buffer_t[SYSTEM_PATH_BUFFER_SIZE];
 
 extern const linked_list_t *system_path();
 
+/// @brief Traverses the tree following the given path. Null if the path is invalid.
 extern linked_list_t *unix_tree_traverse(const file_tree_t *tree, const char *path);
+
+/// @brief Traverses the tree following the given path, and returns the closest valid path
+/// @example if the path is /a/b/c and /a/b exists, it will return /a/b
+extern linked_list_t *unix_tree_traverse_find_closest(const file_tree_t *tree, const char *path);
 
 /// @brief Initializes the current path. This function should be called before any other command
 /// @param tree the file tree
@@ -24,7 +29,9 @@ extern void pwd(out_buffer_t out_buffer);
 
 /// @brief Lists the contents of a directory
 /// @param out_buffer the output of the command
-extern void ls(out_buffer_t out_buffer);
+/// @param tree the file tree
+/// @param path the path to the dir to list
+extern void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path);
 
 /// @brief Creates a file in the file tree
 /// @param out_buffer the output of the command

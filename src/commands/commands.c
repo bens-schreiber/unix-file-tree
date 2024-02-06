@@ -50,20 +50,28 @@ void pwd(out_buffer_t out_buffer)
     out_buffer[index] = '\0';
 }
 
-void cd(out_buffer_t out_buffer, file_tree_t *tree, const char *dir_name)
+void cd(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    out_error(dir_name == NULL || strlen(dir_name) == 0, out_buffer, "err: no directory specified\n");
-    linked_list_t *new_system_path = unix_tree_traverse(tree, dir_name);
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+    linked_list_t *new_system_path = unix_tree_traverse(tree, path);
     out_error(new_system_path == NULL, out_buffer, "err: directory not found\n");
-    
+
     linked_list_free(_system_path);
     _system_path = new_system_path;
 }
 
-void ls(out_buffer_t out_buffer)
+void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    file_node_t *node = (file_node_t *)_system_path->tail->data;
-    linked_list_node_t *iter = node->children->head;
+    if (path == NULL || strlen(path) == 0)
+    {
+        path = ".";
+    }
+
+    linked_list_t *dir_path = unix_tree_traverse(tree, path);
+    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
+
+    file_node_t *dir = (file_node_t *)dir_path->tail->data;
+    linked_list_node_t *iter = dir->children->head;
     int index = 0;
     while (iter != NULL)
     {
@@ -76,53 +84,62 @@ void ls(out_buffer_t out_buffer)
         out_buffer[index] = '\n';
         index += 1;
 
-        if (iter->next == NULL)
-        {
-            break;
-        }
         iter = iter->next;
     }
     out_buffer[index] = '\0';
 }
 
-// TODO: Do we want absolute path creation?
 void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
+
     out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+    linked_list_t *dir_path = unix_tree_traverse_find_closest(tree, path);
+    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
 
-    // If the path starts with no slash, it is just the current directory
-    if (strstr(path, "/") == NULL)
+    linked_list_t *path_string_list = linked_list_init();
+    
+    char *path_copy = strdup(path);
+    char *token = strtok(path_copy, "/");
+    while (token != NULL)
     {
-        file_node_t *node = (file_node_t *)_system_path->tail->data;
+        char *token_copy = strdup(token);
+        linked_list_insert_tail(path_string_list, token_copy);
+        token = strtok(NULL, "/");
+    }
 
-        // check if the directory already exists
-        linked_list_t *child = unix_tree_traverse(node, path);
-        linked_list_free(child);
-        out_error(child != NULL, out_buffer, "err: directory already exists\n");
-        child = NULL;
-
-        file_tree_add_child(tree, node, path);
+    if (strcmp(dir_path->tail->data, path_string_list->tail->data) == 0)
+    {
+        linked_list_free(path_string_list);
+        free(path_copy);
+        linked_list_free(dir_path);
+        out_error(dir_path == NULL, out_buffer, "err: directory exists");
         return;
     }
+
+    file_node_t *parent = (file_node_t *)dir_path->tail->data;
+    file_node_t *new_node = file_tree_add_child(tree, parent, path_string_list->tail->data);
+    linked_list_free(path_string_list);
+    free(path_copy);
+    linked_list_free(dir_path);
+    
 }
 
-// TODO: Do we want absolute path deletion?
 void rmdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
     out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+    linked_list_t *dir_path = unix_tree_traverse(tree, path);
+    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
 
-    // If the path starts with no slash, it is just the current directory
-    if (strstr(path, "/") == NULL)
+    file_node_t *node = (file_node_t *)dir_path->tail->data;
+
+    // find parent
+    file_node_t *parent = NULL;
+    linked_list_node_t *iter = dir_path->head;
+    while (iter != NULL && iter->data != node)
     {
-        file_node_t *parent = (file_node_t *)_system_path->tail->data;
-        linked_list_t *child_to_remove = unix_tree_traverse(parent, path);
-
-        out_error(child_to_remove == NULL, out_buffer, "err: directory not found\n");
-
-        file_node_t *child = (file_node_t *)child_to_remove->tail->data;
-
-        file_tree_delete_child(tree, parent, child);
-
-        linked_list_free(child_to_remove);
+        parent = (file_node_t *)iter->data;
+        iter = iter->next;
     }
+
+    file_tree_delete_child(tree, parent, node);
 }

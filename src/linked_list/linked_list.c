@@ -14,7 +14,7 @@ linked_list_t *linked_list_init()
     return list;
 }
 
-void linked_list_insert(linked_list_t *list, const void *data)
+void linked_list_insert(linked_list_t *list, void *data)
 {
     assert(list != NULL);
 
@@ -33,7 +33,7 @@ void linked_list_insert(linked_list_t *list, const void *data)
     list->size++;
 }
 
-void linked_list_insert_tail(linked_list_t *list, const void *data)
+void linked_list_insert_tail(linked_list_t *list, void *data)
 {
     assert(list != NULL);
 
@@ -56,7 +56,7 @@ void linked_list_insert_tail(linked_list_t *list, const void *data)
     list->size++;
 }
 
-unsigned char linked_list_delete(linked_list_t *list, const void *data)
+unsigned char linked_list_delete(linked_list_t *list, void *data)
 {
     assert(list != NULL);
     assert(data != NULL);

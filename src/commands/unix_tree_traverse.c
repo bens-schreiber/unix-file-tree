@@ -49,10 +49,8 @@ unsigned char _traverse(const file_tree_t *tree, linked_list_t *path_string_list
     return _traverse(tree, path_string_list, new_system_path);
 }
 
-linked_list_t *unix_tree_traverse(const file_tree_t *tree, const char *path)
+unsigned char _do_traversal(const file_tree_t *tree, const char *path, linked_list_t *path_string_list, linked_list_t *new_system_path)
 {
-    linked_list_t *path_string_list = linked_list_init();
-    linked_list_t *new_system_path = linked_list_init();
 
     // If the path string starts with '/', it is absolute and we need to start from the root
     if (path[0] == '/')
@@ -82,9 +80,18 @@ linked_list_t *unix_tree_traverse(const file_tree_t *tree, const char *path)
     }
 
     unsigned char result = _traverse(tree, path_string_list, new_system_path);
-
     linked_list_free(path_string_list);
     free(path_copy);
+
+    return result;
+}
+
+linked_list_t *unix_tree_traverse(const file_tree_t *tree, const char *path)
+{
+
+    linked_list_t *path_string_list = linked_list_init();
+    linked_list_t *new_system_path = linked_list_init();
+    unsigned char result = _do_traversal(tree, path, path_string_list, new_system_path);
 
     if (result == 0)
     {
@@ -92,5 +99,13 @@ linked_list_t *unix_tree_traverse(const file_tree_t *tree, const char *path)
         return NULL;
     }
 
+    return new_system_path;
+}
+
+linked_list_t *unix_tree_traverse_find_closest(const file_tree_t *tree, const char *path)
+{
+    linked_list_t *path_string_list = linked_list_init();
+    linked_list_t *new_system_path = linked_list_init();
+    (void)_do_traversal(tree, path, path_string_list, new_system_path);
     return new_system_path;
 }

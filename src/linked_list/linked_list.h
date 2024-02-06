@@ -2,7 +2,7 @@
 #define LINKED_LIST_H
 
 typedef struct linked_list_node {
-    const void *data;
+    void *data;
     struct linked_list_node *next;
 } linked_list_node_t;
 
@@ -18,18 +18,18 @@ extern linked_list_t *linked_list_init();
 /// @brief Inserts data at the front of the list
 /// @param list the list to insert into
 /// @param data the data to insert
-extern void linked_list_insert(linked_list_t *list, const void *data);
+extern void linked_list_insert(linked_list_t *list, void *data);
 
 /// @brief Inserts data at the back of the list
 /// @param list the list to insert into
 /// @param data the data to insert
-extern void linked_list_insert_tail(linked_list_t *list, const void *data);
+extern void linked_list_insert_tail(linked_list_t *list, void *data);
 
 /// @brief Finds the first instance of data in the list and deletes it
 /// @param list the list to delete from
 /// @param data the data to delete
 /// @return 1 if the data was found and deleted, 0 otherwise
-extern unsigned char linked_list_delete(linked_list_t *list, const void *data);
+extern unsigned char linked_list_delete(linked_list_t *list, void *data);
 
 /// @brief Pops the front of the list.
 /// @param list 
