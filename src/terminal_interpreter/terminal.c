@@ -13,8 +13,11 @@ COMMAND(pwd) { pwd(out_buffer); }
 COMMAND(mkdir) { mkdir(out_buffer, tree, arg); }
 COMMAND(rmdir) { rmdir(out_buffer, tree, arg); }
 COMMAND(exit) { exit(0); }
+COMMAND(quit) { exit(0); }
 COMMAND(creat) { creat(out_buffer, tree, arg); }
 COMMAND(rm) { rm(out_buffer, tree, arg); }
+
+#undef COMMAND
 
 typedef char in_buffer_t[0xFFF];
 
@@ -33,6 +36,7 @@ struct command_map commands[] = {
     {"exit", process_exit},
     {"creat", process_creat},
     {"rm", process_rm},
+    {"quit", process_quit}
 };
 
 void trim_command(const char *command)
