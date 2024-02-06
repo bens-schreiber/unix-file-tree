@@ -8,10 +8,10 @@
 #define COMMAND(name) void process_##name(file_tree_t *tree, out_buffer_t out_buffer, const char *arg)
 
 COMMAND(ls) { ls(out_buffer); }
-COMMAND(cd) { cd(tree, arg); }
+COMMAND(cd) { cd(out_buffer, tree, arg); }
 COMMAND(pwd) { pwd(out_buffer); }
-COMMAND(mkdir) { mkdir(tree, arg); }
-COMMAND(rmdir) { rmdir(tree, arg); }
+COMMAND(mkdir) { mkdir(out_buffer, tree, arg); }
+COMMAND(rmdir) { rmdir(out_buffer, tree, arg); }
 COMMAND(exit) { exit(0); }
 
 typedef char in_buffer_t[0xFFF];
@@ -27,13 +27,14 @@ struct command_map commands[] = {
     {"cd", process_cd},
     {"pwd", process_pwd},
     {"mkdir", process_mkdir},
-    {"rm", process_rmdir},
+    {"rmdir", process_rmdir},
     {"exit", process_exit},
 };
 
 void trim_command(const char *command)
 {
-    if (command == NULL) {
+    if (command == NULL)
+    {
         return;
     }
     char *p = strchr(command, '\n');

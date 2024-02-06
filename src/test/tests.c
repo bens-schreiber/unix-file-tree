@@ -166,16 +166,15 @@ void test_path_search()
 
     file_tree_t *tree = file_tree_init();
     file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1");
-    file_node_t *dir2 = file_tree_add_child(tree, tree->root, "dir2");
 
     path_init(tree);
 
-    linked_list_t *path = tree_search_with_path(tree->root, "/dir1");
+    linked_list_t *path = unix_tree_traverse(tree, "/dir1");
     assert(path != NULL);
     assert(path->size == 2);
     linked_list_free(path);
 
-    path = tree_search_with_path(tree->root, "/dir2");
+    path = unix_tree_traverse(tree, "dir1");
     assert(path != NULL);
     assert(path->size == 2);
     linked_list_free(path);
@@ -235,38 +234,46 @@ void test_command_cd()
 
     out_buffer_t out_buffer;
 
-    // to dir1
-    cd(tree, "dir1");
-    pwd(out_buffer);
-    assert(strcmp(out_buffer, "/dir1/") == 0);
-
-    // up 1 dir
-    cd(tree, "..");
+    // attempt up 1 dir from root, should stay at root
+    cd(out_buffer, tree, "..");
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/") == 0);
 
-    // root to dir
-    cd(tree, "dir2");
+    // switch to dir1, should be at /dir1/
+    cd(out_buffer, tree, "dir1");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/dir1/") == 0);
+
+    // up 1 dir to root
+    cd(out_buffer, tree, "/");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/") == 0);
+
+    // switch to dir2, should be at /dir2/
+    cd(out_buffer, tree, "dir2");
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/dir2/") == 0);
 
     // root from dir
-    cd(tree, "/");
+    cd(out_buffer, tree, "/");
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/") == 0);
 
     // ./ relative path
-    cd(tree, "./dir1");
+    cd(out_buffer, tree, "./dir1");
     pwd(out_buffer);
+    printf("%s\n", out_buffer);
     assert(strcmp(out_buffer, "/dir1/") == 0);
 
     // dir2 isn't found
-    cd(tree, "./dir2");
+    printf("tryign the fuckin test\n");
+    cd(out_buffer, tree, "./dir2");
     pwd(out_buffer);
+    printf("%s\n", out_buffer);
     assert(strcmp(out_buffer, "/dir1/") == 0);
 
     // from dir1 to dir2
-    cd(tree, "/dir2");
+    cd(out_buffer, tree, "/dir2");
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/dir2/") == 0);
 
@@ -276,17 +283,19 @@ void test_command_cd()
     PASS(test_command_cd);
 }
 
-void test_command_mkdir() {
+void test_command_mkdir()
+{
     TEST(test_command_mkdir);
 
     file_tree_t *tree = file_tree_init();
     path_init(tree);
 
-    mkdir(tree, "dir1");
-    mkdir(tree, "dir2");
-    mkdir(tree, "dir3");
-
     out_buffer_t out_buffer;
+
+    mkdir(out_buffer, tree, "dir1");
+    mkdir(out_buffer, tree, "dir2");
+    mkdir(out_buffer, tree, "dir3");
+
     ls(out_buffer);
 
     assert(tree->root->children_size == 3);
@@ -300,21 +309,23 @@ void test_command_mkdir() {
     PASS(test_command_mkdir);
 }
 
-void test_command_rmdir() {
+void test_command_rmdir()
+{
     TEST(test_command_rmdir);
 
     file_tree_t *tree = file_tree_init();
     path_init(tree);
 
-    mkdir(tree, "dir1");
-    mkdir(tree, "dir2");
-    mkdir(tree, "dir3");
-
-    rmdir(tree, "dir1");
-    rmdir(tree, "dir2");
-    rmdir(tree, "dir3");
-
     out_buffer_t out_buffer;
+
+    mkdir(out_buffer, tree, "dir1");
+    mkdir(out_buffer, tree, "dir2");
+    mkdir(out_buffer, tree, "dir3");
+
+    rmdir(out_buffer, tree, "dir1");
+    rmdir(out_buffer, tree, "dir2");
+    rmdir(out_buffer, tree, "dir3");
+
     ls(out_buffer);
 
     assert(tree->root->children_size == 0);
@@ -326,4 +337,33 @@ void test_command_rmdir() {
     tree = file_tree_free(tree);
 
     PASS(test_command_rmdir);
+}
+
+void test_dir_crud()
+{
+    TEST(test_dir_crud);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+
+    out_buffer_t out_buffer;
+
+    mkdir(out_buffer, tree, "a");
+    cd(out_buffer, tree, "a");
+    pwd(out_buffer);
+    assert(strcmp(out_buffer, "/a/") == 0);
+
+    mkdir(out_buffer, tree, "b");
+    ls(out_buffer);
+    assert(strstr(out_buffer, "b") != NULL);
+
+    cd(out_buffer, tree, "b");
+    pwd(out_buffer);
+    printf("%s\n", out_buffer);
+    assert(strcmp(out_buffer, "/a/b/") == 0);
+
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_dir_crud);
 }

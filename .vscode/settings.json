@@ -4,6 +4,11 @@
         "tree-dump.h": "c",
         "consts.h": "c",
         "tree_dump.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "__locale": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "vector": "c"
     }
 }

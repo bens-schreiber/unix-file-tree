@@ -5,7 +5,20 @@
 #include <string.h>
 #include "commands.h"
 
+/// @brief Asserts that the condition is true, and if it is not, sets the out_buffer to the error message and returns.
+#define out_error(condition, out_buffer, error) \
+    if (condition)                              \
+    {                                           \
+        strcpy(out_buffer, error);              \
+        return;                                 \
+    }
+
 static linked_list_t *_system_path = NULL;
+
+const linked_list_t *system_path()
+{
+    return _system_path;
+}
 
 void path_init(const file_tree_t *tree)
 {
@@ -37,50 +50,14 @@ void pwd(out_buffer_t out_buffer)
     out_buffer[index] = '\0';
 }
 
-void cd(file_tree_t *tree, const char *dir_name)
+void cd(out_buffer_t out_buffer, file_tree_t *tree, const char *dir_name)
 {
-    assert(dir_name != NULL && strlen(dir_name) != 0);
-
-    if (strcmp(dir_name, ".") == 0)
-    {
-        return;
-    }
-
-    if (strcmp(dir_name, "..") == 0)
-    {
-        linked_list_pop_tail(_system_path);
-        return;
-    }
-
-    if (strcmp(dir_name, "/") == 0)
-    {
-        linked_list_free(_system_path);
-        _system_path = linked_list_init();
-        linked_list_insert(_system_path, tree->root);
-        return;
-    }
-
-    linked_list_t *path = NULL;
-
-    // If the path is relative (ie ./dir) we need to search from the current directory
-    // If the path is absolute (ie /dir) we need to search from the root
-    if (dir_name[0] == '.' && dir_name[1] == '/')
-    {
-        dir_name += 2;
-        path = tree_search_with_path((file_node_t *)_system_path->tail->data, dir_name);
-    }
-    else
-    {
-        path = tree_search_with_path(tree->root, dir_name);
-    }
-
-    if (path == NULL)
-    {
-        return;
-    }
-
+    out_error(dir_name == NULL || strlen(dir_name) == 0, out_buffer, "err: no directory specified\n");
+    linked_list_t *new_system_path = unix_tree_traverse(tree, dir_name);
+    out_error(new_system_path == NULL, out_buffer, "err: directory not found\n");
+    
     linked_list_free(_system_path);
-    _system_path = path;
+    _system_path = new_system_path;
 }
 
 void ls(out_buffer_t out_buffer)
@@ -109,28 +86,39 @@ void ls(out_buffer_t out_buffer)
 }
 
 // TODO: Do we want absolute path creation?
-void mkdir(file_tree_t *tree, const char *path)
+void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    assert(path != NULL && strlen(path) != 0);
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+
     // If the path starts with no slash, it is just the current directory
     if (strstr(path, "/") == NULL)
     {
         file_node_t *node = (file_node_t *)_system_path->tail->data;
+
+        // check if the directory already exists
+        linked_list_t *child = unix_tree_traverse(node, path);
+        linked_list_free(child);
+        out_error(child != NULL, out_buffer, "err: directory already exists\n");
+        child = NULL;
+
         file_tree_add_child(tree, node, path);
         return;
     }
 }
 
-// TODO: Do we want absolute path creation?
-void rmdir(file_tree_t *tree, const char *path)
+// TODO: Do we want absolute path deletion?
+void rmdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    assert(path != NULL && strlen(path) != 0);
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+
     // If the path starts with no slash, it is just the current directory
     if (strstr(path, "/") == NULL)
     {
         file_node_t *parent = (file_node_t *)_system_path->tail->data;
-        linked_list_t *child_to_remove = tree_search_with_path(parent, path);
-        assert(child_to_remove != NULL);
+        linked_list_t *child_to_remove = unix_tree_traverse(parent, path);
+
+        out_error(child_to_remove == NULL, out_buffer, "err: directory not found\n");
+
         file_node_t *child = (file_node_t *)child_to_remove->tail->data;
 
         file_tree_delete_child(tree, parent, child);
