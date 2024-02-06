@@ -36,7 +36,7 @@ extern void mkdir(file_tree_t *tree, const char *path);
 /// @brief Deletes a file from the file tree
 /// @param tree the file tree
 /// @param path the path to the file
-extern void rm(file_tree_t *tree, const char *path);
+extern void rmdir(file_tree_t *tree, const char *path);
 
 /// @brief Changes the current directory
 /// @param tree the file tree

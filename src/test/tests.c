@@ -300,8 +300,8 @@ void test_command_mkdir() {
     PASS(test_command_mkdir);
 }
 
-void test_command_rm() {
-    TEST(test_command_rm);
+void test_command_rmdir() {
+    TEST(test_command_rmdir);
 
     file_tree_t *tree = file_tree_init();
     path_init(tree);
@@ -310,9 +310,9 @@ void test_command_rm() {
     mkdir(tree, "dir2");
     mkdir(tree, "dir3");
 
-    rm(tree, "dir1");
-    rm(tree, "dir2");
-    rm(tree, "dir3");
+    rmdir(tree, "dir1");
+    rmdir(tree, "dir2");
+    rmdir(tree, "dir3");
 
     out_buffer_t out_buffer;
     ls(out_buffer);
@@ -325,5 +325,5 @@ void test_command_rm() {
     path_free();
     tree = file_tree_free(tree);
 
-    PASS(test_command_rm);
+    PASS(test_command_rmdir);
 }

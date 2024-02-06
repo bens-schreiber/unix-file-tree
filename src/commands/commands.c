@@ -122,7 +122,7 @@ void mkdir(file_tree_t *tree, const char *path)
 }
 
 // TODO: Do we want absolute path creation?
-void rm(file_tree_t *tree, const char *path)
+void rmdir(file_tree_t *tree, const char *path)
 {
     assert(path != NULL && strlen(path) != 0);
     // If the path starts with no slash, it is just the current directory

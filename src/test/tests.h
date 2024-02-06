@@ -35,7 +35,7 @@ extern void test_command_cd();
 extern void test_command_mkdir();
 
 /// @brief remove a file command
-extern void test_command_rm();
+extern void test_command_rmdir();
 
 /// @brief Run all tests. Done in a linear fashion such that prequisites tests are ran first.
 static inline void test()
@@ -51,7 +51,7 @@ static inline void test()
     test_command_ls();
     test_command_cd();
     test_command_mkdir();
-    test_command_rm();
+    test_command_rmdir();
 }
 
 #endif // TESTS_H
