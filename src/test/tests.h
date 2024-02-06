@@ -31,6 +31,9 @@ extern void test_path_search();
 /// @brief change directory command
 extern void test_command_cd();
 
+/// @brief make a directory command
+extern void test_command_mkdir();
+
 /// @brief Run all tests. Done in a linear fashion such that prequisites tests are ran first.
 static inline void test()
 {
@@ -44,6 +47,7 @@ static inline void test()
     test_path_search();
     test_command_ls();
     test_command_cd();
+    test_command_mkdir();
 }
 
 #endif // TESTS_H

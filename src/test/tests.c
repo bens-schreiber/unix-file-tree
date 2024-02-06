@@ -250,7 +250,7 @@ void test_command_cd()
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/dir2/") == 0);
 
-    // root from dir 
+    // root from dir
     cd(tree, "/");
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/") == 0);
@@ -270,9 +270,32 @@ void test_command_cd()
     pwd(out_buffer);
     assert(strcmp(out_buffer, "/dir2/") == 0);
 
-
     path_free();
     tree = file_tree_free(tree);
 
     PASS(test_command_cd);
+}
+
+void test_command_mkdir() {
+    TEST(test_command_mkdir);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+
+    mkdir(tree, "dir1");
+    mkdir(tree, "dir2");
+    mkdir(tree, "dir3");
+
+    out_buffer_t out_buffer;
+    ls(out_buffer);
+
+    assert(tree->root->children_size == 3);
+    assert(strstr(out_buffer, "dir1") != NULL);
+    assert(strstr(out_buffer, "dir2") != NULL);
+    assert(strstr(out_buffer, "dir3") != NULL);
+
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_command_mkdir);
 }

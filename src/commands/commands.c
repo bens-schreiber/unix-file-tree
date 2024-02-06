@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
 #include "commands.h"
 
 static linked_list_t *_system_path = NULL;
@@ -36,6 +39,8 @@ void pwd(out_buffer_t out_buffer)
 
 void cd(file_tree_t *tree, const char *dir_name)
 {
+    assert(dir_name != NULL && strlen(dir_name) != 0);
+
     if (strcmp(dir_name, ".") == 0)
     {
         return;
@@ -63,7 +68,9 @@ void cd(file_tree_t *tree, const char *dir_name)
     {
         dir_name += 2;
         path = tree_search_with_path((file_node_t *)_system_path->tail->data, dir_name);
-    } else {
+    }
+    else
+    {
         path = tree_search_with_path(tree->root, dir_name);
     }
 
@@ -99,4 +106,18 @@ void ls(out_buffer_t out_buffer)
         iter = iter->next;
     }
     out_buffer[index] = '\0';
+}
+
+void mkdir(file_tree_t *tree, const char *path)
+{
+    assert(path != NULL && strlen(path) != 0);
+    // If the path starts with no slash, it is just the current directory
+    if (strstr(path, "/") == NULL)
+    {
+        file_node_t *node = (file_node_t *)_system_path->tail->data;
+        file_tree_add_child(tree, node, path);
+        return;
+    }
+
+    // TODO: Do we want absolute path creation?
 }

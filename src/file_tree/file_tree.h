@@ -3,7 +3,7 @@
 #include "../linked_list/linked_list.h"
 #include "../consts.h"
 
-typedef char file_name_t[MAX_FILE_NAME_LENGTH];
+typedef const char file_name_t[MAX_FILE_NAME_LENGTH];
 
 typedef struct file_node
 {
