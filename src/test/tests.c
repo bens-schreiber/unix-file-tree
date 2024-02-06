@@ -186,27 +186,38 @@ void test_path_search() {
 }
 
 void test_command_ls() {
-    // TEST(test_command_ls);
+    TEST(test_command_ls);
 
-    // file_tree_t *tree = file_tree_init();
-    // file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+    file_tree_t *tree = file_tree_init();
 
-    // for (int i = 0; i < MAX_FILE_CHILDREN; i++)
-    // {
-    //     char name[MAX_FILE_NAME_LENGTH];
-    //     sprintf(name, "file%d", i);
-    //     file_tree_add_child(tree, node, name);
-    // }
+    for (int i = 0; i < MAX_FILE_CHILDREN; i++)
+    {
+        char name[MAX_FILE_NAME_LENGTH];
+        sprintf(name, "file%d", i);
+        file_tree_add_child(tree, tree->root, name);
+    }
 
-    // path_init(tree);
-    // out_buffer_t out_buffer;
-    // ls(out_buffer);
+    path_init(tree);
+    out_buffer_t out_buffer;
+    ls(out_buffer);
 
-    // printf("out_buffer: %s\n", out_buffer);
-    // assert(strlen(out_buffer) == MAX_FILE_CHILDREN * (MAX_FILE_NAME_LENGTH + 1));
+    // We expect there to be MAX_FILE_CHILDREN files in the dir
+    // Count the number of lines
+    int count = 0;
+    for (int i = 0; i < MAX_FILE_CHILDREN; i++)
+    {
+        char name[MAX_FILE_NAME_LENGTH];
+        sprintf(name, "file%d", i);
+        if (strstr(out_buffer, name) != NULL)
+        {
+            count++;
+        }
+    }
 
-    // path_free();
-    // tree = file_tree_free(tree);
+    assert(count == MAX_FILE_CHILDREN);
 
-    // PASS(test_command_ls);
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_command_ls);
 }

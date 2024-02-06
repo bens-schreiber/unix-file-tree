@@ -28,7 +28,7 @@ extern void test_command_ls();
 /// @brief search for a file inside of the file tree
 extern void test_path_search();
 
-/// @brief Run all tests.
+/// @brief Run all tests. Done in a linear fashion such that prequisites tests are ran first.
 static inline void test()
 {
     test_tree_init();
@@ -38,8 +38,8 @@ static inline void test()
     test_tree_delete_multiple();
     test_tree_dump();
     test_command_pwd();
-    test_command_ls();
     test_path_search();
+    test_command_ls();
 }
 
 #endif // TESTS_H
