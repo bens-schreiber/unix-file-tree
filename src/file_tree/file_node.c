@@ -4,12 +4,13 @@
 #include <assert.h>
 #include <string.h>
 
-file_node_t *file_node_init(file_name_t name)
+file_node_t *file_node_init(file_name_t name, unsigned char is_dir)
 {
     file_node_t *node = malloc(sizeof(file_node_t));
     assert(node != NULL);
 
-    node->children = linked_list_init();
+    node->is_dir = is_dir;
+    node->children = is_dir ? linked_list_init() : NULL;
 
     // Copy name
     strcpy(node->name, name);
@@ -24,9 +25,10 @@ file_node_t *file_node_init(file_name_t name)
     return node;
 }
 
-file_node_t *file_node_add_child(file_node_t *node, file_name_t name)
+file_node_t *file_node_add_child(file_node_t *node, file_name_t name, unsigned char is_dir)
 {
-    file_node_t *child = file_node_init(name);
+    assert(node->is_dir == 1);
+    file_node_t *child = file_node_init(name, is_dir);
 
     // Add child to parent
     // Increment children_size
@@ -38,7 +40,9 @@ file_node_t *file_node_add_child(file_node_t *node, file_name_t name)
 
 void *file_node_free(file_node_t *node)
 {
-    linked_list_free(node->children);
+    if (node->is_dir) {
+        linked_list_free(node->children);
+    }
     free(node);
     node = NULL;
     return node;

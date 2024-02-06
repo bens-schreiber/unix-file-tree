@@ -34,7 +34,7 @@ void test_tree_insert()
     TEST(test_tree_insert);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *node = file_tree_add_child(tree, tree->root, "dir1");
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir1", 1);
 
     assert(tree->size == 2);
     assert(tree->root->children_size == 1);
@@ -52,13 +52,13 @@ void test_tree_insert_multiple()
     TEST(test_tree_insert_multiple);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir", 1);
 
     for (int i = 0; i < MAX_FILE_CHILDREN; i++)
     {
         char name[MAX_FILE_NAME_LENGTH];
         sprintf(name, "file%d", i);
-        file_tree_add_child(tree, node, name);
+        file_tree_add_child(tree, node, name, 0);
     }
 
     assert(tree->size == MAX_FILE_CHILDREN + 2);
@@ -75,7 +75,7 @@ void test_tree_delete()
     TEST(test_tree_delete);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *node = file_tree_add_child(tree, tree->root, "dir1");
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir1", 1);
 
     node = file_tree_delete_child(tree, tree->root, node);
     assert(tree->size == 1);
@@ -93,7 +93,7 @@ void test_tree_delete_multiple()
     TEST(test_tree_delete_multiple);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir", 1);
 
     file_node_t *dirs[MAX_FILE_CHILDREN];
 
@@ -101,7 +101,7 @@ void test_tree_delete_multiple()
     {
         char name[MAX_FILE_NAME_LENGTH];
         sprintf(name, "file%d", i);
-        dirs[i] = file_tree_add_child(tree, node, name);
+        dirs[i] = file_tree_add_child(tree, node, name, 0);
     }
 
     // Delete half of them
@@ -127,13 +127,13 @@ void test_tree_dump()
     TEST(test_tree_dump);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+    file_node_t *node = file_tree_add_child(tree, tree->root, "dir", 1);
 
     for (int i = 0; i < MAX_FILE_CHILDREN; i++)
     {
         char name[MAX_FILE_NAME_LENGTH];
         sprintf(name, "file%d", i);
-        file_tree_add_child(tree, node, name);
+        file_tree_add_child(tree, node, name, 0);
     }
 
     tree_dump(tree);
@@ -165,7 +165,7 @@ void test_path_search()
     TEST(test_path_search);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1");
+    file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1", 1);
 
     path_init(tree);
 
@@ -194,7 +194,7 @@ void test_command_ls()
     {
         char name[MAX_FILE_NAME_LENGTH];
         sprintf(name, "file%d", i);
-        file_tree_add_child(tree, tree->root, name);
+        file_tree_add_child(tree, tree->root, name, 0);
     }
 
     path_init(tree);
@@ -227,8 +227,8 @@ void test_command_cd()
     TEST(test_command_cd);
 
     file_tree_t *tree = file_tree_init();
-    file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1");
-    file_node_t *dir2 = file_tree_add_child(tree, tree->root, "dir2");
+    file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1", 1);
+    file_node_t *dir2 = file_tree_add_child(tree, tree->root, "dir2", 1);
 
     path_init(tree);
 

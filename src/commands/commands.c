@@ -76,17 +76,32 @@ void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     while (iter != NULL)
     {
         file_node_t *child = (file_node_t *)iter->data;
+        // append "./" to the beginning of the name if it is a directory
+        if (child->is_dir)
+        {
+            strcpy(&out_buffer[index], "./");
+            index += 2;
+        }
+
         for (int i = 0; i < strlen(child->name); i++)
         {
             out_buffer[index] = child->name[i];
             index += 1;
         }
-        out_buffer[index] = '\n';
+        out_buffer[index] = '\t';
         index += 1;
+
+        // append ".file" to the end of the name if it is a file
+        if (!child->is_dir)
+        {
+            strcpy(&out_buffer[index], ".file");
+            index += 5;
+        }
 
         iter = iter->next;
     }
-    out_buffer[index] = '\0';
+
+    strcpy(&out_buffer[index], "\n\0");
 }
 
 void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
@@ -117,7 +132,7 @@ void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     }
 
     file_node_t *parent = (file_node_t *)dir_path->tail->data;
-    file_node_t *new_node = file_tree_add_child(tree, parent, path_string_list->tail->data);
+    file_node_t *new_node = file_tree_add_child(tree, parent, path_string_list->tail->data, 1);
     linked_list_free(path_string_list);
     free(path_copy);
     linked_list_free(dir_path);
@@ -140,6 +155,8 @@ void rmdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
         parent = (file_node_t *)iter->data;
         iter = iter->next;
     }
+
+    out_error(!parent->is_dir, out_buffer, "err: tried to delete file, not directory\n");
 
     file_tree_delete_child(tree, parent, node);
 }

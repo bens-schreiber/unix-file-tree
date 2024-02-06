@@ -10,7 +10,7 @@ file_tree_t *file_tree_init()
     assert(tree != NULL);
 
     // Initialize root node
-    tree->root = file_node_init(TREE_ROOT_NAME);
+    tree->root = file_node_init(TREE_ROOT_NAME, 1);
     tree->size = 1;
     return tree;
 }

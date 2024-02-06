@@ -24,6 +24,11 @@ void preorder_traversal(const file_node_t *node)
     assert(string_buffer_index < STRING_BUFFER_SIZE);
 
     // recurse on children
+    if (!node->is_dir)
+    {
+        return;
+    }
+
     linked_list_node_t *iter = node->children->head;
     while (iter != NULL)
     {
