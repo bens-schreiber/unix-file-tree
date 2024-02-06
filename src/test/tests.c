@@ -152,11 +152,61 @@ void test_command_pwd()
     out_buffer_t out_buffer;
     pwd(out_buffer);
 
-    printf("out_buffer: %s\n", out_buffer);
     assert(strcmp(out_buffer, "/") == 0);
 
     path_free();
     tree = file_tree_free(tree);
 
     PASS(test_command_pwd);
+}
+
+void test_path_search() {
+    TEST(test_path_search);
+
+    file_tree_t *tree = file_tree_init();
+    file_node_t *dir1 = file_tree_add_child(tree, tree->root, "dir1");
+    file_node_t *dir2 = file_tree_add_child(tree, tree->root, "dir2");
+
+    path_init(tree);
+
+    linked_list_t *path = tree_search_with_path(tree->root, "/dir1");
+    assert(path != NULL);
+    assert(path->size == 2);
+    linked_list_free(path);
+
+    path = tree_search_with_path(tree->root, "/dir2");
+    assert(path != NULL);
+    assert(path->size == 2);
+    linked_list_free(path);
+
+    tree = file_tree_free(tree);
+
+    PASS(test_path_search);
+    
+}
+
+void test_command_ls() {
+    // TEST(test_command_ls);
+
+    // file_tree_t *tree = file_tree_init();
+    // file_node_t *node = file_tree_add_child(tree, tree->root, "dir");
+
+    // for (int i = 0; i < MAX_FILE_CHILDREN; i++)
+    // {
+    //     char name[MAX_FILE_NAME_LENGTH];
+    //     sprintf(name, "file%d", i);
+    //     file_tree_add_child(tree, node, name);
+    // }
+
+    // path_init(tree);
+    // out_buffer_t out_buffer;
+    // ls(out_buffer);
+
+    // printf("out_buffer: %s\n", out_buffer);
+    // assert(strlen(out_buffer) == MAX_FILE_CHILDREN * (MAX_FILE_NAME_LENGTH + 1));
+
+    // path_free();
+    // tree = file_tree_free(tree);
+
+    // PASS(test_command_ls);
 }

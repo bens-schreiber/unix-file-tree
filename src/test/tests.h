@@ -22,6 +22,12 @@ extern void test_tree_dump();
 /// @brief present working directory command
 extern void test_command_pwd();
 
+/// @brief list command
+extern void test_command_ls();
+
+/// @brief search for a file inside of the file tree
+extern void test_path_search();
+
 /// @brief Run all tests.
 static inline void test()
 {
@@ -32,6 +38,8 @@ static inline void test()
     test_tree_delete_multiple();
     test_tree_dump();
     test_command_pwd();
+    test_command_ls();
+    test_path_search();
 }
 
 #endif // TESTS_H

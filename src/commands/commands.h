@@ -7,6 +7,12 @@
 
 typedef char out_buffer_t[SYSTEM_PATH_BUFFER_SIZE];
 
+/// @brief Searches for a file in the file tree, following the path
+/// @param node the parent node to start the search from
+/// @param path the path to the file
+/// @return the path to the file, or NULL if the file was not found
+extern linked_list_t *tree_search_with_path(const file_node_t *node, const char *path);
+
 /// @brief Initializes the current path. This function should be called before any other command
 /// @param tree the file tree
 extern void path_init(const file_tree_t *tree);
@@ -20,7 +26,7 @@ extern void pwd(out_buffer_t out_buffer);
 
 /// @brief Lists the contents of a directory
 /// @param tree the file tree
-extern void ls();
+extern void ls(out_buffer_t out_buffer);
 
 /// @brief Creates a file in the file tree
 /// @param tree the file tree
@@ -35,6 +41,6 @@ extern void rm(file_tree_t *tree, const char *path);
 /// @brief Changes the current directory
 /// @param tree the file tree
 /// @param path the path to the new dir
-extern void cd(file_tree_t *tree, const char *path);
+extern void cd(const char *dir_name, out_buffer_t out_buffer);
 
 #endif // COMMANDS_H
