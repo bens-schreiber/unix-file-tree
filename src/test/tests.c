@@ -356,7 +356,6 @@ void test_dir_crud()
 
     cd(out_buffer, tree, "b");
     pwd(out_buffer);
-    printf("%s\n", out_buffer);
     assert(strcmp(out_buffer, "/a/b/") == 0);
 
     path_free();
