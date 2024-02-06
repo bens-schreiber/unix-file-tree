@@ -262,14 +262,11 @@ void test_command_cd()
     // ./ relative path
     cd(out_buffer, tree, "./dir1");
     pwd(out_buffer);
-    printf("%s\n", out_buffer);
     assert(strcmp(out_buffer, "/dir1/") == 0);
 
     // dir2 isn't found
-    printf("tryign the fuckin test\n");
     cd(out_buffer, tree, "./dir2");
     pwd(out_buffer);
-    printf("%s\n", out_buffer);
     assert(strcmp(out_buffer, "/dir1/") == 0);
 
     // from dir1 to dir2

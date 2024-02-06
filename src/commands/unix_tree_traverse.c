@@ -15,8 +15,6 @@ unsigned char _traverse(const file_tree_t *tree, linked_list_t *path_string_list
     const char *phrase = path_string_list->head->data;
     const file_node_t *cwd = new_system_path->tail->data;
 
-    printf("phrase: %s\n", phrase);
-
     // Up 1 dir
     if (strcmp(phrase, "..") == 0 && cwd != tree->root)
     {
