@@ -51,4 +51,16 @@ extern void rmdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path);
 /// @param path the path to the new dir
 extern void cd(out_buffer_t out_buffer, file_tree_t *tree, const char *dir_name);
 
+/// @brief Creates a file (touch command, but wsu lab wanted it to be called creat for some reason)
+/// @param out_buffer the output of the command
+/// @param tree the file tree
+/// @param path the path to the new file
+extern void creat(out_buffer_t out_buffer, file_tree_t *tree, const char *path);
+
+/// @brief Removes a file
+/// @param out_buffer the output of the command
+/// @param tree the file tree
+/// @param path the path to the file
+extern void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path);
+
 #endif // COMMANDS_H

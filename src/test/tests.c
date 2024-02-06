@@ -375,3 +375,58 @@ void test_dir_crud()
 
     PASS(test_dir_crud);
 }
+
+void test_command_creat() {
+    TEST(test_command_creat);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+
+    out_buffer_t out_buffer;
+
+    creat(out_buffer, tree, "file1");
+    creat(out_buffer, tree, "file2");
+    creat(out_buffer, tree, "file3");
+
+    ls(out_buffer, tree, ".");
+
+    assert(((file_node_t *)tree->root->children->head->data)->is_dir == 0);
+    assert(tree->root->children_size == 3);
+    assert(strstr(out_buffer, "file1") != NULL);
+    assert(strstr(out_buffer, "file2") != NULL);
+    assert(strstr(out_buffer, "file3") != NULL);
+
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_command_creat);
+}
+
+
+void test_command_rm() {
+    TEST(test_command_rm);
+
+    file_tree_t *tree = file_tree_init();
+    path_init(tree);
+
+    out_buffer_t out_buffer;
+
+    creat(out_buffer, tree, "file1");
+    creat(out_buffer, tree, "file2");
+    creat(out_buffer, tree, "file3");
+
+    rm(out_buffer, tree, "file1");
+    rm(out_buffer, tree, "file2");
+    rm(out_buffer, tree, "file3");
+
+    ls(out_buffer, tree, ".");
+    assert(tree->root->children_size == 0);
+    assert(strstr(out_buffer, "file1") == NULL);
+    assert(strstr(out_buffer, "file2") == NULL);
+    assert(strstr(out_buffer, "file3") == NULL);
+
+    path_free();
+    tree = file_tree_free(tree);
+
+    PASS(test_command_rm);
+}

@@ -37,8 +37,14 @@ extern void test_command_mkdir();
 /// @brief remove a file command
 extern void test_command_rmdir();
 
-/// @brief create, read, update, delete directory
+/// @brief create, read, update, delete directory. More extensive than test_command_mkdir and test_command_rmdir
 extern void test_dir_crud();
+
+/// @brief create a file command
+extern void test_command_creat();
+
+/// @brief remove a file command
+extern void test_command_rm();
 
 /// @brief Run all tests. Done in a linear fashion such that prequisites tests are ran first.
 static inline void test()
@@ -56,6 +62,8 @@ static inline void test()
     test_command_mkdir();
     test_command_rmdir();
     test_dir_crud();
+    test_command_creat();
+    test_command_rm();
 }
 
 #endif // TESTS_H
