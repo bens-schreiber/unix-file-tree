@@ -80,6 +80,12 @@ void terminal_loop()
         memset(out_buffer, 0, sizeof(out_buffer));
 
         char *command = strtok(in_buffer, " ");
+
+        if (strcmp(command, "\n") == 0 || strcmp(command, "\r") == 0 || command == NULL)
+        {
+            continue;
+        }
+
         const char *arg = strtok(NULL, " ");
 
         process_command(tree, command, out_buffer, arg);
