@@ -16,6 +16,8 @@ COMMAND(exit) { exit(0); }
 COMMAND(quit) { exit(0); }
 COMMAND(creat) { creat(out_buffer, tree, arg); }
 COMMAND(rm) { rm(out_buffer, tree, arg); }
+COMMAND(save) { save(tree, arg); }
+COMMAND(reload) { reload(tree, arg); }
 
 #undef COMMAND
 
@@ -36,7 +38,9 @@ struct command_map commands[] = {
     {"exit", process_exit},
     {"creat", process_creat},
     {"rm", process_rm},
-    {"quit", process_quit}
+    {"quit", process_quit},
+    {"save", process_save},
+    {"reload", process_reload}
 };
 
 void trim_command(const char *command)

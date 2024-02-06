@@ -1,7 +1,7 @@
 #include "test/tests.h"
 #include "terminal_interpreter/terminal.h"
 
-#define DEBUG
+// #define DEBUG
 
 int main(int argc, char const *argv[])
 {

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "commands.h"
+#include "../tree_dump/tree_dump.h"
 
 /// @brief Asserts that the condition is true, and if it is not, sets the out_buffer to the error message and returns.
 #define out_error(condition, out_buffer, error) \
@@ -210,4 +211,16 @@ void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 
     out_error(node->is_dir, out_buffer, "err: tried to delete directory, not file\n");
     file_tree_delete_child(tree, parent, node);
+}
+
+void save(file_tree_t *tree, const char *filename) {
+    tree_dump(tree);
+}
+
+void reload(file_tree_t *tree, const char *filename) {
+    file_tree_t *new_tree = tree_load();
+    assert(new_tree != NULL);
+    file_tree_free(tree);
+    path_free();
+    path_init(new_tree);
 }
