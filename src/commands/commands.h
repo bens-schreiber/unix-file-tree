@@ -71,6 +71,7 @@ extern void save(file_tree_t *tree, const char *filename);
 /// @brief Reloads the tree from a dump file on disk
 /// @param tree the file tree
 /// @param filename the name of the file to load from
-extern void reload(file_tree_t *tree, const char *filename);
+/// @return the new tree
+extern file_tree_t *reload(file_tree_t *tree, const char *filename);
 
 #endif // COMMANDS_H

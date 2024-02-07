@@ -5,7 +5,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define COMMAND(name) void process_##name(file_tree_t *tree, out_buffer_t out_buffer, const char *arg)
+static file_tree_t *tree = NULL;
+
+#define COMMAND(name) void process_##name(out_buffer_t out_buffer, const char *arg)
 
 COMMAND(ls) { ls(out_buffer, tree, arg); }
 COMMAND(cd) { cd(out_buffer, tree, arg); }
@@ -17,7 +19,7 @@ COMMAND(quit) { exit(0); }
 COMMAND(creat) { creat(out_buffer, tree, arg); }
 COMMAND(rm) { rm(out_buffer, tree, arg); }
 COMMAND(save) { save(tree, arg); }
-COMMAND(reload) { reload(tree, arg); }
+COMMAND(reload) { tree = reload(tree, arg); }
 
 #undef COMMAND
 
@@ -26,7 +28,7 @@ typedef char in_buffer_t[0xFFF];
 struct command_map
 {
     char *command;
-    void (*function)(file_tree_t *, out_buffer_t, const char *);
+    void (*function)(out_buffer_t, const char *);
 };
 
 struct command_map commands[] = {
@@ -58,7 +60,7 @@ void trim_command(const char *command)
         *p = 0;
 }
 
-void process_command(file_tree_t *tree, char *command, out_buffer_t out_buffer, const char *arg)
+void process_command(char *command, out_buffer_t out_buffer, const char *arg)
 {
     trim_command(command);
     trim_command(arg);
@@ -66,7 +68,7 @@ void process_command(file_tree_t *tree, char *command, out_buffer_t out_buffer, 
     {
         if (strcmp(command, commands[i].command) == 0)
         {
-            commands[i].function(tree, out_buffer, arg);
+            commands[i].function(out_buffer, arg);
             return;
         }
     }
@@ -75,7 +77,7 @@ void process_command(file_tree_t *tree, char *command, out_buffer_t out_buffer, 
 
 void terminal_loop()
 {
-    file_tree_t *tree = file_tree_init();
+    tree = file_tree_init();
     path_init(tree);
 
     out_buffer_t out_buffer;
@@ -100,7 +102,7 @@ void terminal_loop()
 
         const char *arg = strtok(NULL, " ");
 
-        process_command(tree, command, out_buffer, arg);
+        process_command(command, out_buffer, arg);
 
         if (out_buffer[0] != '\0')
         {

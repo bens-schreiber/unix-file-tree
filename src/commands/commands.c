@@ -217,10 +217,11 @@ void save(file_tree_t *tree, const char *filename) {
     tree_dump(tree);
 }
 
-void reload(file_tree_t *tree, const char *filename) {
+file_tree_t *reload(file_tree_t *tree, const char *filename) {
     file_tree_t *new_tree = tree_load();
     assert(new_tree != NULL);
     file_tree_free(tree);
     path_free();
     path_init(new_tree);
+    return new_tree;
 }
