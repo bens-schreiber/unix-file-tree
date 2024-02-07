@@ -10,20 +10,27 @@ typedef char out_buffer_t[SYSTEM_PATH_BUFFER_SIZE];
 extern const linked_list_t *system_path();
 
 /// @brief Traverses the tree following the given path. Null if the path is invalid.
+/// @param tree the file tree
+/// @param path the path to traverse
+/// @return the linked list of file nodes
+/// @example "/a/b/c" will return a linked list with the nodes a, b, and c, asserting that the tree has the nodes a, b, and c
 extern linked_list_t *unix_tree_traverse(const file_tree_t *tree, const char *path);
 
 /// @brief Traverses the tree following the given path, and returns the closest valid path
-/// @example if the path is /a/b/c and /a/b exists, it will return /a/b
+/// @param tree the file tree
+/// @param path the path to traverse
+/// @return the linked list of file nodes
+/// @example search for "/a/b/c" in a tree with only "/a/b" will return a linked list with the nodes a and b
 extern linked_list_t *unix_tree_traverse_find_closest(const file_tree_t *tree, const char *path);
 
-/// @brief Initializes the current path. This function should be called before any other command
+/// @brief Initializes the current path. This function should be called before any other command.
 /// @param tree the file tree
 extern void path_init(const file_tree_t *tree);
 
 /// @brief Frees the current path
 extern void path_free();
 
-/// @brief Writes to the output buffer the current path
+/// @brief Writes the present working directory to the out_buffer.
 /// @param out_buffer the output of the command
 extern void pwd(out_buffer_t out_buffer);
 

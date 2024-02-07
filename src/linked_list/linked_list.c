@@ -14,7 +14,7 @@ linked_list_t *linked_list_init()
     return list;
 }
 
-void linked_list_insert(linked_list_t *list, void *data)
+void linked_list_insert_head(linked_list_t *list, void *data)
 {
     assert(list != NULL);
 
@@ -56,7 +56,7 @@ void linked_list_insert_tail(linked_list_t *list, void *data)
     list->size++;
 }
 
-unsigned char linked_list_delete(linked_list_t *list, void *data)
+void *linked_list_delete(linked_list_t *list, void *data)
 {
     assert(list != NULL);
     assert(data != NULL);
@@ -82,19 +82,21 @@ unsigned char linked_list_delete(linked_list_t *list, void *data)
             }
             free(curr);
             list->size--;
-            return 1;
+            return data;
         }
         prev = curr;
         curr = curr->next;
     }
-    return 0;
+    return NULL;
 }
 
-void linked_list_pop_head(linked_list_t *list)
+void *linked_list_pop_head(linked_list_t *list)
 {
+    void *data = NULL;
     if (list != NULL && list->head != NULL)
     {
         linked_list_node_t *next = list->head->next;
+        data = list->head->data;
         free(list->head);
         list->head = next;
         if (list->head == NULL)
@@ -103,20 +105,24 @@ void linked_list_pop_head(linked_list_t *list)
         }
         list->size--;
     }
+
+    return data;
 }
 
-void linked_list_pop_tail(linked_list_t *list)
+void *linked_list_pop_tail(linked_list_t *list)
 {
+    void *data = NULL;
     if (list != NULL && list->tail != NULL)
     {
         linked_list_node_t *curr = list->head;
+        data = list->tail->data;
         if (curr == list->tail)
         {
             free(curr);
             list->head = NULL;
             list->tail = NULL;
             list->size--;
-            return;
+            return data;
         }
         while (curr->next != list->tail)
         {
@@ -127,6 +133,7 @@ void linked_list_pop_tail(linked_list_t *list)
         curr->next = NULL;
         list->size--;
     }
+    return data;
 }
 
 void linked_list_free(linked_list_t *list)

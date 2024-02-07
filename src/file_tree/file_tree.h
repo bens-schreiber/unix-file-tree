@@ -9,17 +9,19 @@ typedef struct file_node
 {
     char name[MAX_FILE_NAME_LENGTH];
     unsigned int children_size;
-    unsigned char is_dir;
-    linked_list_t *children;
+    unsigned char is_dir;           /// < 1 if the file node is a directory, 0 if it is a file
+    linked_list_t *children;        /// < NULL if the file node is a file
 } file_node_t;
 
 /// @brief Allocates a file node on the heap with a name, with no children (NULL)
 /// @param name the name of the file node
+/// @param is_dir 1 if the file node is a directory, 0 if it is a file
 extern file_node_t *file_node_init(file_name_t name, unsigned char is_dir);
 
 /// @brief Adds a child to the file node
 /// @param name The name that child should have
 /// @param node The parent node
+/// @param is_dir 1 if the file node is a directory, 0 if it is a file
 /// @return The new child
 extern file_node_t *file_node_add_child(file_node_t *node, file_name_t name, unsigned char is_dir);
 
@@ -41,14 +43,11 @@ extern file_tree_t *file_tree_init();
 /// @brief Deletes a file tree and all of its nodes
 extern void *file_tree_free(file_tree_t *tree);
 
-/// @brief Traverses the file tree and frees all nodes
-/// @param tree the file tree
-extern void file_tree_out(const file_tree_t *tree);
-
 /// @brief Adds a new child to node
 /// @param tree the file tree
 /// @param node the parent node
 /// @param name name of the new file
+/// @param is_dir 1 if the file node is a directory, 0 if it is a file
 /// @return the child node
 static inline file_node_t *file_tree_add_child(file_tree_t *tree, file_node_t *node, file_name_t name, unsigned char is_dir)
 {

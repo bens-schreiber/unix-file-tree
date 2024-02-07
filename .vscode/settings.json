@@ -9,6 +9,8 @@
         "array": "c",
         "string": "c",
         "string_view": "c",
-        "vector": "c"
+        "vector": "c",
+        "file_tree.h": "c",
+        "tree_serializer.h": "c"
     }
 }

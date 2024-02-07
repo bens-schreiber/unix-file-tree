@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "commands.h"
-#include "../tree_dump/tree_dump.h"
+#include "../tree_serializer/tree_serializer.h"
 
 /// @brief Asserts that the condition is true, and if it is not, sets the out_buffer to the error message and returns.
 #define out_error(condition, out_buffer, error) \
@@ -14,6 +14,7 @@
         return;                                 \
     }
 
+/// @brief The system path that the terminal is currently operating on.
 static linked_list_t *_system_path = NULL;
 
 const linked_list_t *system_path()
@@ -24,7 +25,7 @@ const linked_list_t *system_path()
 void path_init(const file_tree_t *tree)
 {
     _system_path = linked_list_init();
-    linked_list_insert(_system_path, tree->root);
+    linked_list_insert_head(_system_path, tree->root);
 }
 
 void path_free()
@@ -57,13 +58,14 @@ void cd(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     linked_list_t *new_system_path = unix_tree_traverse(tree, path);
     out_error(new_system_path == NULL, out_buffer, "err: directory not found\n");
     out_error(((file_node_t *)new_system_path->tail->data)->is_dir == 0, out_buffer, "err: not a directory\n");
-
     linked_list_free(_system_path);
     _system_path = new_system_path;
 }
 
 void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
+
+    // Assume the current directory if no path is given
     if (path == NULL || strlen(path) == 0)
     {
         path = ".";
@@ -213,20 +215,24 @@ void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     file_tree_delete_child(tree, parent, node);
 }
 
-void save(out_buffer_t out_buffer, file_tree_t *tree, const char *filename) {
+void save(out_buffer_t out_buffer, file_tree_t *tree, const char *filename)
+{
     out_error(filename == NULL || strlen(filename) == 0, out_buffer, "err: no file specified\n");
-    tree_dump(tree, filename);
+    tree_serialize_to_file(tree, filename);
 }
 
-file_tree_t *reload(out_buffer_t out_buffer, file_tree_t *tree, const char *filename) {
+file_tree_t *reload(out_buffer_t out_buffer, file_tree_t *tree, const char *filename)
+{
 
-    if (filename == NULL || strlen(filename) == 0) {
+    if (filename == NULL || strlen(filename) == 0)
+    {
         strcpy(out_buffer, "err: no file specified\n");
         return tree;
     }
 
-    file_tree_t *new_tree = tree_load(filename);
-    if (new_tree == NULL) {
+    file_tree_t *new_tree = tree_deserialize_from_file(filename);
+    if (new_tree == NULL)
+    {
         strcpy(out_buffer, "err: could not load file\n");
         return tree;
     }

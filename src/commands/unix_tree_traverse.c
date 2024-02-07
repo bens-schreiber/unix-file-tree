@@ -18,7 +18,7 @@ unsigned char _traverse(const file_tree_t *tree, linked_list_t *path_string_list
     // Up 1 dir
     if (strcmp(phrase, "..") == 0 && cwd != tree->root)
     {
-        linked_list_pop_tail(new_system_path);
+        (void)linked_list_pop_tail(new_system_path);
     }
 
     // Must be navigating to a directory, find the directory in the current directory
@@ -45,7 +45,7 @@ unsigned char _traverse(const file_tree_t *tree, linked_list_t *path_string_list
         linked_list_insert_tail(new_system_path, found);
     }
 
-    linked_list_pop_head(path_string_list);
+    (void)linked_list_pop_head(path_string_list);
     return _traverse(tree, path_string_list, new_system_path);
 }
 
@@ -55,7 +55,7 @@ unsigned char _do_traversal(const file_tree_t *tree, const char *path, linked_li
     // If the path string starts with '/', it is absolute and we need to start from the root
     if (path[0] == '/')
     {
-        linked_list_insert(new_system_path, tree->root);
+        linked_list_insert_head(new_system_path, tree->root);
     }
 
     // The path is relative to the current directory. Copy the current system path to the new system path

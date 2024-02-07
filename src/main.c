@@ -1,5 +1,5 @@
 #include "test/tests.h"
-#include "terminal_interpreter/terminal.h"
+#include "terminal/terminal.h"
 
 // #define DEBUG
 

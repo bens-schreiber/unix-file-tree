@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "../file_tree/file_tree.h"
-#include "../tree_dump/tree_dump.h"
+#include "../tree_serializer/tree_serializer.h"
 #include "../commands/commands.h"
 
 #define TEST(name) printf("\nRunning test: " #name "\n");
@@ -355,7 +355,8 @@ void test_dir_crud()
     PASS(test_dir_crud);
 }
 
-void test_command_creat() {
+void test_command_creat()
+{
     TEST(test_command_creat);
 
     file_tree_t *tree = file_tree_init();
@@ -381,8 +382,8 @@ void test_command_creat() {
     PASS(test_command_creat);
 }
 
-
-void test_command_rm() {
+void test_command_rm()
+{
     TEST(test_command_rm);
 
     file_tree_t *tree = file_tree_init();
@@ -431,7 +432,7 @@ void test_tree_dump()
     cd(out_buffer, tree, "../dir3");
     mkdir(out_buffer, tree, "dir6");
 
-    tree_dump(tree, DUMP_LOAD_TEST_FILE);
+    tree_serialize_to_file(tree, DUMP_LOAD_TEST_FILE);
 
     // read the file
     FILE *file = fopen("../build/tree-dump.tree", "r");
@@ -449,7 +450,8 @@ void test_tree_dump()
     PASS(test_tree_dump);
 }
 
-void test_tree_load() {
+void test_tree_load()
+{
     TEST(test_tree_load);
 
     file_tree_t *tree = file_tree_init();
@@ -467,7 +469,7 @@ void test_tree_load() {
     cd(out_buffer, tree, "../dir3");
     mkdir(out_buffer, tree, "dir6");
 
-    tree_dump(tree, DUMP_LOAD_TEST_FILE);
+    tree_serialize_to_file(tree, DUMP_LOAD_TEST_FILE);
 
     // read the file
     FILE *file = fopen("../build/tree-dump.tree", "r");
@@ -482,10 +484,10 @@ void test_tree_load() {
     tree = file_tree_free(tree);
 
     // load the file
-    tree = tree_load(DUMP_LOAD_TEST_FILE);
+    tree = tree_deserialize_from_file(DUMP_LOAD_TEST_FILE);
 
     // serialize it again
-    tree_dump(tree, DUMP_LOAD_TEST_FILE);
+    tree_serialize_to_file(tree, DUMP_LOAD_TEST_FILE);
 
     // read the file
     file = fopen("../build/tree-dump.tree", "r");
@@ -497,7 +499,6 @@ void test_tree_load() {
 
     assert(strcmp(buffer, "# #dir1 #dir4 $$#dir2 #dir5 $$#dir3 #dir6 $$$") == 0);
     tree = file_tree_free(tree);
-
 
     PASS(test_tree_dump);
 }

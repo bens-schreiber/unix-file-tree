@@ -25,7 +25,7 @@ void *file_tree_free(file_tree_t *tree)
 void *file_tree_delete_child(file_tree_t *tree, file_node_t *parent, file_node_t *node)
 {
     unsigned int node_size = node->children_size;
-    assert(linked_list_delete(parent->children, (void*)node) == 1);
+    assert(linked_list_delete(parent->children, (void*)node) != NULL);
     parent->children_size--;
     tree->size -= node_size + 1;
     return node;
