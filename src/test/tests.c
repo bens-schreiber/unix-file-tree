@@ -410,6 +410,8 @@ void test_command_rm() {
     PASS(test_command_rm);
 }
 
+#define DUMP_LOAD_TEST_FILE "tree-dump.tree"
+
 void test_tree_dump()
 {
     TEST(test_tree_dump);
@@ -429,7 +431,7 @@ void test_tree_dump()
     cd(out_buffer, tree, "../dir3");
     mkdir(out_buffer, tree, "dir6");
 
-    tree_dump(tree);
+    tree_dump(tree, DUMP_LOAD_TEST_FILE);
 
     // read the file
     FILE *file = fopen("../build/tree-dump.tree", "r");
@@ -465,7 +467,7 @@ void test_tree_load() {
     cd(out_buffer, tree, "../dir3");
     mkdir(out_buffer, tree, "dir6");
 
-    tree_dump(tree);
+    tree_dump(tree, DUMP_LOAD_TEST_FILE);
 
     // read the file
     FILE *file = fopen("../build/tree-dump.tree", "r");
@@ -480,10 +482,10 @@ void test_tree_load() {
     tree = file_tree_free(tree);
 
     // load the file
-    tree = tree_load();
+    tree = tree_load(DUMP_LOAD_TEST_FILE);
 
     // serialize it again
-    tree_dump(tree);
+    tree_dump(tree, DUMP_LOAD_TEST_FILE);
 
     // read the file
     file = fopen("../build/tree-dump.tree", "r");
@@ -493,7 +495,6 @@ void test_tree_load() {
     buffer[size] = '\0';
     fclose(file);
 
-    printf("%s\n", buffer);
     assert(strcmp(buffer, "# #dir1 #dir4 $$#dir2 #dir5 $$#dir3 #dir6 $$$") == 0);
     tree = file_tree_free(tree);
 

@@ -36,14 +36,13 @@ void preorder_traversal(const file_node_t *node)
     string_buffer[string_buffer_index++] = TREE_SERIALIZE_DELIMITER;
 }
 
-void tree_dump(const file_tree_t *tree)
+void tree_dump(const file_tree_t *tree, const char* path)
 {
     string_buffer_index = 0;
     string_buffer = (char *)malloc(STRING_BUFFER_SIZE);
     preorder_traversal(tree->root);
 
-    FILE *file = fopen(TREE_DUMP_PATH, "w");
-    assert(file != NULL);
+    FILE *file = fopen(path, "w");
     fprintf(file, "%s", string_buffer);
     fclose(file);
     free(string_buffer);
@@ -75,9 +74,9 @@ void dfs_load(file_tree_t *tree, file_node_t *parent, linked_list_t *preorder_tr
     }
 }
 
-file_tree_t *tree_load()
+file_tree_t *tree_load(const char *path)
 {
-    FILE *file = fopen(TREE_DUMP_PATH, "r");
+    FILE *file = fopen(path, "r");
     if (file == NULL)
     {
         return NULL;

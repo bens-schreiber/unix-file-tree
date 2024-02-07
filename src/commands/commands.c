@@ -213,13 +213,23 @@ void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     file_tree_delete_child(tree, parent, node);
 }
 
-void save(file_tree_t *tree, const char *filename) {
-    tree_dump(tree);
+void save(out_buffer_t out_buffer, file_tree_t *tree, const char *filename) {
+    out_error(filename == NULL || strlen(filename) == 0, out_buffer, "err: no file specified\n");
+    tree_dump(tree, filename);
 }
 
-file_tree_t *reload(file_tree_t *tree, const char *filename) {
-    file_tree_t *new_tree = tree_load();
-    assert(new_tree != NULL);
+file_tree_t *reload(out_buffer_t out_buffer, file_tree_t *tree, const char *filename) {
+
+    if (filename == NULL || strlen(filename) == 0) {
+        strcpy(out_buffer, "err: no file specified\n");
+        return tree;
+    }
+
+    file_tree_t *new_tree = tree_load(filename);
+    if (new_tree == NULL) {
+        strcpy(out_buffer, "err: could not load file\n");
+        return tree;
+    }
     file_tree_free(tree);
     path_free();
     path_init(new_tree);

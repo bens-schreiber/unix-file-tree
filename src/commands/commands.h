@@ -66,12 +66,12 @@ extern void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path);
 /// @brief Loads the tree into a dump file on disk
 /// @param tree the file tree
 /// @param filename the name of the file to save to
-extern void save(file_tree_t *tree, const char *filename);
+extern void save(out_buffer_t out_buffer, file_tree_t *tree, const char *filename);
 
 /// @brief Reloads the tree from a dump file on disk
 /// @param tree the file tree
 /// @param filename the name of the file to load from
 /// @return the new tree
-extern file_tree_t *reload(file_tree_t *tree, const char *filename);
+extern file_tree_t *reload(out_buffer_t out_buffer, file_tree_t *tree, const char *filename);
 
 #endif // COMMANDS_H

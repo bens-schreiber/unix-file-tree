@@ -18,8 +18,8 @@ COMMAND(exit) { exit(0); }
 COMMAND(quit) { exit(0); }
 COMMAND(creat) { creat(out_buffer, tree, arg); }
 COMMAND(rm) { rm(out_buffer, tree, arg); }
-COMMAND(save) { save(tree, arg); }
-COMMAND(reload) { tree = reload(tree, arg); }
+COMMAND(save) { save(out_buffer, tree, arg); }
+COMMAND(reload) { tree = reload(out_buffer, tree, arg); }
 
 #undef COMMAND
 
@@ -61,13 +61,14 @@ void trim_command(const char *command)
 }
 
 void process_command(char *command, out_buffer_t out_buffer, const char *arg)
-{
+{   
     trim_command(command);
     trim_command(arg);
     for (int i = 0; i < sizeof(commands) / sizeof(struct command_map); i++)
     {
         if (strcmp(command, commands[i].command) == 0)
         {
+
             commands[i].function(out_buffer, arg);
             return;
         }
@@ -101,7 +102,7 @@ void terminal_loop()
         }
 
         const char *arg = strtok(NULL, " ");
-
+        
         process_command(command, out_buffer, arg);
 
         if (out_buffer[0] != '\0')
