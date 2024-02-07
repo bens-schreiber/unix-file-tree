@@ -439,7 +439,7 @@ void test_tree_dump()
     int size = fread(buffer, 1, 0xFFF, file);
     buffer[size] = '\0';
 
-    assert(strcmp(buffer, " dir1 dir4 $$dir2 dir5 $$dir3 dir6 $$$") == 0);
+    assert(strcmp(buffer, "# #dir1 #dir4 $$#dir2 #dir5 $$#dir3 #dir6 $$$") == 0);
 
     fclose(file);
     tree = file_tree_free(tree);
@@ -476,7 +476,7 @@ void test_tree_load() {
     buffer[size] = '\0';
     fclose(file);
 
-    assert(strcmp(buffer, " dir1 dir4 $$dir2 dir5 $$dir3 dir6 $$$") == 0);
+    assert(strcmp(buffer, "# #dir1 #dir4 $$#dir2 #dir5 $$#dir3 #dir6 $$$") == 0);
     tree = file_tree_free(tree);
 
     // load the file
@@ -493,7 +493,8 @@ void test_tree_load() {
     buffer[size] = '\0';
     fclose(file);
 
-    assert(strcmp(buffer, " dir1 dir4 $$dir2 dir5 $$dir3 dir6 $$$") == 0);
+    printf("%s\n", buffer);
+    assert(strcmp(buffer, "# #dir1 #dir4 $$#dir2 #dir5 $$#dir3 #dir6 $$$") == 0);
     tree = file_tree_free(tree);
 
 

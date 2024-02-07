@@ -17,6 +17,7 @@ void preorder_traversal(const file_node_t *node)
         return;
     }
 
+    string_buffer[string_buffer_index++] = node->is_dir ? TREE_SERIALIZE_DIR_DELIMITER : TREE_SERIALIZE_FILE_DELIMITER;
     strcpy(string_buffer + string_buffer_index, node->name);
     string_buffer_index += strlen(node->name);
     string_buffer[string_buffer_index++] = ' ';
@@ -25,7 +26,7 @@ void preorder_traversal(const file_node_t *node)
     {
         return;
     }
-    linked_list_node_t *iter = node->children->head;
+    linked_list_node_t *iter = node->children == NULL ? NULL : node->children->head;
     while (iter != NULL)
     {
         preorder_traversal(iter->data);
@@ -51,10 +52,6 @@ void tree_dump(const file_tree_t *tree)
 void dfs_load(file_tree_t *tree, file_node_t *parent, linked_list_t *preorder_trav_list)
 {
     assert(preorder_trav_list != NULL);
-    if (preorder_trav_list->size == 0)
-    {
-        return;
-    }
 
     while (preorder_trav_list->size > 0)
     {
@@ -64,7 +61,15 @@ void dfs_load(file_tree_t *tree, file_node_t *parent, linked_list_t *preorder_tr
             preorder_trav_list->head->data++;
             return;
         }
-        file_node_t *node = file_tree_add_child(tree, parent, phrase, 1);
+        if (phrase[0] == '\0')
+        {
+            return;
+        }
+
+        unsigned char is_dir = phrase[0] == TREE_SERIALIZE_DIR_DELIMITER;
+        phrase++;
+
+        file_node_t *node = file_tree_add_child(tree, parent, phrase, is_dir);
         linked_list_pop_head(preorder_trav_list);
         dfs_load(tree, node, preorder_trav_list);
     }
@@ -95,6 +100,8 @@ file_tree_t *tree_load()
         token = strtok(NULL, " ");
     }
 
+    // extra pop to remove the first delimiter
+    linked_list_pop_head(preorder_trav_list);
     dfs_load(tree, tree->root, preorder_trav_list);
 
     free(buffer);
