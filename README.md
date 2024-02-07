@@ -15,3 +15,5 @@ commands:
 - save      (serializes && saves the file system tree to a file)
 - reload    (deserializes && loads the file system tree from a file)
 
+## Running
+`cd ./build && cmake CMakeLists.txt && make all && ./a`
