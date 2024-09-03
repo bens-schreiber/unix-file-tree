@@ -94,6 +94,8 @@ void terminal_loop()
     char *command = NULL;
     while (1)
     {
+        // Clear the output buffer
+        memset(out_buffer, 0, sizeof(out_buffer));
 
         // Show pwd on terminal loop
         pwd(out_buffer);
@@ -120,7 +122,7 @@ void terminal_loop()
         // Print the output buffer if it has been written to
         if (out_buffer[0] != '\0')
         {
-            printf("%s", out_buffer);
+            printf("%s\n", out_buffer);
         }
     }
 }

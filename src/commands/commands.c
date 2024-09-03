@@ -54,10 +54,16 @@ void pwd(out_buffer_t out_buffer)
 
 void cd(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+
+    // Go to root on no path
+    if (path == NULL || strlen(path) == 0)
+    {
+        path = "/";
+    }
+
     linked_list_t *new_system_path = unix_tree_traverse(tree, path);
-    out_error(new_system_path == NULL, out_buffer, "err: directory not found\n");
-    out_error(((file_node_t *)new_system_path->tail->data)->is_dir == 0, out_buffer, "err: not a directory\n");
+    out_error(new_system_path == NULL, out_buffer, "err: directory not found");
+    out_error(((file_node_t *)new_system_path->tail->data)->is_dir == 0, out_buffer, "err: not a directory");
     linked_list_free(_system_path);
     _system_path = new_system_path;
 }
@@ -72,8 +78,8 @@ void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     }
 
     linked_list_t *dir_path = unix_tree_traverse(tree, path);
-    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
-    out_error(((file_node_t *)dir_path->tail->data)->is_dir == 0, out_buffer, "err: not a directory\n");
+    out_error(dir_path == NULL, out_buffer, "err: directory not found");
+    out_error(((file_node_t *)dir_path->tail->data)->is_dir == 0, out_buffer, "err: not a directory");
 
     file_node_t *dir = (file_node_t *)dir_path->tail->data;
     linked_list_node_t *iter = dir->children->head;
@@ -81,12 +87,10 @@ void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     while (iter != NULL)
     {
         file_node_t *child = (file_node_t *)iter->data;
-        // append "./" to the beginning of the name if it is a directory
-        if (child->is_dir)
-        {
-            strcpy(&out_buffer[index], "./");
-            index += 2;
-        }
+
+        // append "D " to the beginning of the name if it is a directory, "F " otherwise
+        strcpy(&out_buffer[index], child->is_dir ? "D " : "F ");
+        index += 2;
 
         for (int i = 0; i < strlen(child->name); i++)
         {
@@ -98,15 +102,15 @@ void ls(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
         iter = iter->next;
     }
 
-    strcpy(&out_buffer[index], "\n\0");
+    strcpy(&out_buffer[index], "\0");
 }
 
 void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
 
-    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified");
     linked_list_t *dir_path = unix_tree_traverse_find_closest(tree, path);
-    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
+    out_error(dir_path == NULL, out_buffer, "err: directory not found");
 
     linked_list_t *path_string_list = linked_list_init();
 
@@ -120,7 +124,7 @@ void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     }
 
     file_node_t *parent = (file_node_t *)dir_path->tail->data;
-    out_error(parent->is_dir == 0, out_buffer, "err: tried to create directory in file\n");
+    out_error(parent->is_dir == 0, out_buffer, "err: tried to create directory in file");
 
     const char *name = path_string_list->tail->data;
     const unsigned char exists = strcmp(parent->name, name) == 0;
@@ -134,16 +138,19 @@ void mkdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     free(path_copy);
     linked_list_free(dir_path);
 
-    out_error(exists, out_buffer, "err: name already exists\n");
+    out_error(exists, out_buffer, "err: name already exists");
 }
 
 void rmdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified\n");
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no directory specified");
     linked_list_t *dir_path = unix_tree_traverse(tree, path);
-    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
+    out_error(dir_path == NULL, out_buffer, "err: directory not found");
 
     file_node_t *node = (file_node_t *)dir_path->tail->data;
+
+    out_error(!node->is_dir, out_buffer, "err: tried to delete file, not directory");
+    out_error(node->children->size > 0, out_buffer, "err: directory not empty");
 
     // find parent
     file_node_t *parent = NULL;
@@ -154,16 +161,14 @@ void rmdir(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
         iter = iter->next;
     }
 
-    out_error(!parent->is_dir, out_buffer, "err: tried to delete file, not directory\n");
-
     file_tree_delete_child(tree, parent, node);
 }
 
 void creat(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no file specified\n");
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no file specified");
     linked_list_t *dir_path = unix_tree_traverse_find_closest(tree, path);
-    out_error(dir_path == NULL, out_buffer, "err: directory not found\n");
+    out_error(dir_path == NULL, out_buffer, "err: directory not found");
 
     linked_list_t *path_string_list = linked_list_init();
 
@@ -177,7 +182,7 @@ void creat(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     }
 
     file_node_t *parent = (file_node_t *)dir_path->tail->data;
-    out_error(parent->is_dir == 0, out_buffer, "err: tried to create file in file\n");
+    out_error(parent->is_dir == 0, out_buffer, "err: tried to create file in file");
 
     const char *name = path_string_list->tail->data;
     const unsigned char exists = strcmp(parent->name, name) == 0;
@@ -191,14 +196,14 @@ void creat(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
     free(path_copy);
     linked_list_free(dir_path);
 
-    out_error(exists, out_buffer, "err: name already exists\n");
+    out_error(exists, out_buffer, "err: name already exists");
 }
 
 void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
 {
-    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no file specified\n");
+    out_error(path == NULL || strlen(path) == 0, out_buffer, "err: no file specified");
     linked_list_t *dir_path = unix_tree_traverse(tree, path);
-    out_error(dir_path == NULL, out_buffer, "err: file not found\n");
+    out_error(dir_path == NULL, out_buffer, "err: file not found");
 
     file_node_t *node = (file_node_t *)dir_path->tail->data;
 
@@ -211,13 +216,13 @@ void rm(out_buffer_t out_buffer, file_tree_t *tree, const char *path)
         iter = iter->next;
     }
 
-    out_error(node->is_dir, out_buffer, "err: tried to delete directory, not file\n");
+    out_error(node->is_dir, out_buffer, "err: tried to delete directory, not file");
     file_tree_delete_child(tree, parent, node);
 }
 
 void save(out_buffer_t out_buffer, file_tree_t *tree, const char *filename)
 {
-    out_error(filename == NULL || strlen(filename) == 0, out_buffer, "err: no file specified\n");
+    out_error(filename == NULL || strlen(filename) == 0, out_buffer, "err: no file specified");
     tree_serialize_to_file(tree, filename);
 }
 
@@ -226,14 +231,14 @@ file_tree_t *reload(out_buffer_t out_buffer, file_tree_t *tree, const char *file
 
     if (filename == NULL || strlen(filename) == 0)
     {
-        strcpy(out_buffer, "err: no file specified\n");
+        strcpy(out_buffer, "err: no file specified");
         return tree;
     }
 
     file_tree_t *new_tree = tree_deserialize_from_file(filename);
     if (new_tree == NULL)
     {
-        strcpy(out_buffer, "err: could not load file\n");
+        strcpy(out_buffer, "err: could not load file");
         return tree;
     }
     file_tree_free(tree);

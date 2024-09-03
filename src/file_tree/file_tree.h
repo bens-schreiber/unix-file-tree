@@ -9,8 +9,8 @@ typedef struct file_node
 {
     char name[MAX_FILE_NAME_LENGTH];
     unsigned int children_size;
-    unsigned char is_dir;           /// < 1 if the file node is a directory, 0 if it is a file
-    linked_list_t *children;        /// < NULL if the file node is a file
+    unsigned char is_dir;           /// 1 if the file node is a directory, 0 if it is a file
+    linked_list_t *children;        ///  NULL if the file node is a file
 } file_node_t;
 
 /// @brief Allocates a file node on the heap with a name, with no children (NULL)

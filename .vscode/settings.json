@@ -1,16 +1,17 @@
 {
-    "files.associations": {
-        "file-tree.h": "c",
-        "tree-dump.h": "c",
-        "consts.h": "c",
-        "tree_dump.h": "c",
-        "assert.h": "c",
-        "__locale": "c",
-        "array": "c",
-        "string": "c",
-        "string_view": "c",
-        "vector": "c",
-        "file_tree.h": "c",
-        "tree_serializer.h": "c"
-    }
+  "files.associations": {
+    "file-tree.h": "c",
+    "tree-dump.h": "c",
+    "consts.h": "c",
+    "tree_dump.h": "c",
+    "assert.h": "c",
+    "__locale": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c",
+    "vector": "c",
+    "file_tree.h": "c",
+    "tree_serializer.h": "c"
+  },
+  "cmake.sourceDirectory": "/Users/benjaminschreiber/projects/unix-file-tree/build"
 }
